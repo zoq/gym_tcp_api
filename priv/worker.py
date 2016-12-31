@@ -22,12 +22,12 @@ logger.setLevel(logging.INFO)
   on this server. The Envs class is based on the gym-http-api project
 
   @misc{gymhttpapi2016,
-  title = {OpenAI gym-http-api},
-  year = {2016},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/openai/gym-http-api}}
-}
+    title = {OpenAI gym-http-api},
+    year = {2016},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/openai/gym-http-api}}
+  }
 """
 class Envs(object):
   def __init__(self):
@@ -130,11 +130,9 @@ class Envs(object):
     env.close()
     self._remove_env(instance_id)
 
-  def env_close_unused(self, instance_id):
-    for key in self.envs:
-      if key != instance_id:
+  def env_close_all(self):
+    for key in self.envs.keys():
         self.env_close(key)
-        break
 
 """
   Error handling.
@@ -195,8 +193,8 @@ def process_response(response):
 
   enviroment = get_optional_params(jsonMessage, "env", "name")
   if isinstance(enviroment, basestring):
+    envs.env_close_all()
     instance_id = envs.create(enviroment)
-    envs.env_close_unused(instance_id)
 
   actionspace = get_optional_params(jsonMessage, "env", "actionspace")
   if isinstance(actionspace, basestring):
