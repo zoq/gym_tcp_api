@@ -56,10 +56,25 @@ defmodule GymTcpApi.Server do
   end
 
   def pool_process(socket) do
-    :poolboy.transaction(
-      GymTcpApi.pool_name(),
-      fn(pid) -> GymTcpApi.Worker.process(pid, socket) end,
-      :infinity
-    )
+    case :gen_tcp.recv(socket, 0, 10000) do
+      {:ok, data} = _ ->
+        :poolboy.transaction(
+          GymTcpApi.pool_name(),
+          fn(pid) -> GymTcpApi.Worker.process(pid, socket, data) end,
+          :infinity
+        );
+      {:error, :timeout} = timeout ->
+        exit(:shutdown);
+      {:error, :closed} = _ ->
+        exit(:shutdown);
+      {:error, _} = error ->
+        exit(error);
+    end
+
+    # :poolboy.transaction(
+    #   GymTcpApi.pool_name(),
+    #   fn(pid) -> GymTcpApi.Worker.process(pid, socket) end,
+    #   :infinity
+    # )
   end
 end

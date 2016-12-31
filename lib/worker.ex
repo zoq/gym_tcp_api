@@ -29,18 +29,26 @@ defmodule GymTcpApi.Worker do
     {:reply, [response], python}
   end
 
-  def process(pid, socket) do
-    case :gen_tcp.recv(socket, 0) do
+
+  def handle_message(pid, socket) do
+    case :gen_tcp.recv(socket, 0, 1000) do
       {:ok, data} = _ ->
         :gen_server.call(pid, {socket, data});
-        process(pid, socket);
+        handle_message(pid, socket);
       {:error, :timeout} = timeout ->
-        Logger.info "Recv timeout: #{timeout}.";
+        Logger.info "Recv timeout.";
         exit(:shutdown);
       {:error, :closed} = _ ->
+        Logger.info "Recv closed.";
         exit(:shutdown);
       {:error, _} = error ->
+        Logger.info "Recv error.";
         exit(error);
     end
+  end
+
+  def process(pid, socket, data) do
+    :gen_server.call(pid, {socket, data});
+    handle_message(pid, socket)
   end
 end
