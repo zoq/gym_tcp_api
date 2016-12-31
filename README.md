@@ -1,5 +1,9 @@
 # gym-tcp-api
 
+This project provides a distributed infrastructure (TCP API) to the OpenAI Gym toolkit, allowing development in languages other than python.
+
+The server is written in elixir, enabling a infrastructure infrastructure. Each Elixir node makes use of a set limit of processes can be used (8 python process per default). That can be used to perform time consuming tasks.
+
 ## Dependencies
 
 The server has the following dependencies:
