@@ -187,7 +187,7 @@ def process_response(response):
   data = response.strip()
 
   if (len(data) == 0):
-    return "error"
+    return "error\r\n\r\n"
 
   jsonMessage = json.loads(data)
 
