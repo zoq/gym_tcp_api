@@ -48,11 +48,11 @@ defmodule GymTcpApi.Server do
     :gen_tcp.recv(socket, 0)
   end
 
-  def write_line(_, {:ok, ""}) do
-  end
-
   def write_line(socket, {:ok, text}) do
-    :gen_tcp.send(socket, text)
+    if String.strip(text) === "" do
+    else
+      :gen_tcp.send(socket, text)
+    end
   end
 
   def pool_process(socket) do
@@ -70,11 +70,5 @@ defmodule GymTcpApi.Server do
       {:error, _} = error ->
         exit(error);
     end
-
-    # :poolboy.transaction(
-    #   GymTcpApi.pool_name(),
-    #   fn(pid) -> GymTcpApi.Worker.process(pid, socket) end,
-    #   :infinity
-    # )
   end
 end
