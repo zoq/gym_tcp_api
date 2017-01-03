@@ -29,9 +29,8 @@ defmodule GymTcpApi.Worker do
     {:reply, [response], python}
   end
 
-
   def handle_message(pid, socket) do
-    case :gen_tcp.recv(socket, 0, 1000) do
+    case :gen_tcp.recv(socket, 0, 10000) do
       {:ok, data} = _ ->
         :gen_server.call(pid, {socket, data});
         handle_message(pid, socket);
