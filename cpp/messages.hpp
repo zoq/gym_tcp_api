@@ -42,7 +42,7 @@ static inline std::string MonitorStart(
       + ", \"directory\": \"" + directory + "\"}}";
 }
 
-//! Create message to set the enviroment name.
+//! Create message to set the enviroment seed.
 static inline std::string EnvironmentSeed(const size_t& seed)
 {
   return "{\"env\":{\"seed\": \"" + std::to_string(seed) + "\"}}";
