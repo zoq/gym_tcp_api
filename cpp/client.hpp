@@ -22,14 +22,7 @@ using boost::lambda::_1;
 using boost::lambda::var;
 using boost::lambda::bind;
 
-void async_read_handler(const boost::system::error_code& err,
-                        boost::system::error_code* err_out,
-                        std::size_t bytes_transferred,
-                        std::size_t* bytes_out)
-{
-  *err_out = err;
-  *bytes_out = bytes_transferred;
-}
+
 
 /**
  * Implementation of the Client.
@@ -37,6 +30,15 @@ void async_read_handler(const boost::system::error_code& err,
 class Client
 {
  public:
+  static void async_read_handler(const boost::system::error_code& err,
+                        boost::system::error_code* err_out,
+                        std::size_t bytes_transferred,
+                        std::size_t* bytes_out)
+  {
+    *err_out = err;
+    *bytes_out = bytes_transferred;
+  }
+
   /**
    * Create the Client object using the given host and port.
    *
@@ -97,7 +99,7 @@ class Client
   void receive(std::string& data)
   {
     // Set a deadline for the asynchronous operation.
-    deadline.expires_from_now(boost::posix_time::seconds(1000));
+    deadline.expires_from_now(boost::posix_time::seconds(10));
 
     // Set up the variable that receives the result of the asynchronous
     // operation.
@@ -131,14 +133,16 @@ class Client
   void send(const std::string& data)
   {
     // Set a deadline for the asynchronous operation.
-    deadline.expires_from_now(boost::posix_time::seconds(1000));
+    deadline.expires_from_now(boost::posix_time::seconds(10));
 
     // Set up the variable that receives the result of the asynchronous
     // operation.
     boost::system::error_code ec = boost::asio::error::would_block;
 
-    boost::asio::async_write(s, boost::asio::buffer(data  + "\r\n"),
-        var(ec) = _1);
+    std::string d = data  + "\r\n";
+
+    boost::asio::async_write(s, boost::asio::buffer(d),
+        boost::asio::transfer_exactly(d.size()), var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
     do io_service.run_one(); while (ec == boost::asio::error::would_block);
@@ -157,12 +161,6 @@ class Client
     // deadline before this actor had a chance to run.
     if (deadline.expires_at() <= deadline_timer::traits_type::now())
     {
-      // The deadline has passed. The socket is closed so that any outstanding
-      // asynchronous operations are cancelled. This allows the blocked
-      // connect(), read_line() or write_line() functions to return.
-      boost::system::error_code ignored_ec;
-      s.close(ignored_ec);
-
       // There is no longer an active deadline. The expiry is set to positive
       // infinity so that the actor takes no action until a new deadline is set.
       deadline.expires_at(boost::posix_time::pos_infin);
