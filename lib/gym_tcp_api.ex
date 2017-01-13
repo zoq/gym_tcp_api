@@ -14,14 +14,15 @@ defmodule GymTcpApi do
     poolboy_config = [
       {:name, {:local, pool_name()}},
       {:worker_module, GymTcpApi.Worker},
-      {:size, 4},
+      {:size, Application.get_env(:gym_tcp_api, :worker)},
       {:max_overflow, 0}
     ]
 
     children = [
       :poolboy.child_spec(pool_name(), poolboy_config, []),
       supervisor(Task.Supervisor, [[name: GymTcpApi.TaskSupervisor]]),
-      worker(Task, [GymTcpApi.Server, :accept, [4040]])
+      worker(Task, [GymTcpApi.Server, :accept,
+          [Application.get_env(:gym_tcp_api, :port)]])
     ]
 
     options = [
