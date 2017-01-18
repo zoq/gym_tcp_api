@@ -24,8 +24,16 @@ defmodule GymTcpApi.Worker do
   def handle_call({data, caller}, _, python) do
     response = :python.call(python, :worker, :process_response, [data])
 
-    send(caller, {:response, response})
-    {:reply, [response], python}
+    current = self()
+    send(caller, {:response, response, current})
+
+    receive do
+      {:data, message, c} ->
+          handle_call({message, caller}, :ok, python);
+      {:close, message} -> message
+    end
+
+    {:reply, [""], python}
   end
 
   def process(pid, data, caller) do
