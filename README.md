@@ -33,7 +33,7 @@ First, checkout the repo and change into the unpacked directory:
       git clone https://github.com/zoq/gym_tcp_api.git
       cd gym_tcp_api
 
-Then installe the elixir dependencies:
+Then install the elixir dependencies:
 
       $ mix deps.get
 
