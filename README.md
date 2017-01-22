@@ -17,6 +17,7 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
 The server has the following dependencies:
 
     Elixir >= 1.0
+    OpenAI Gym
 
 The c++ example agent has the following dependencies:
 
