@@ -25,16 +25,16 @@ defmodule GymTcpApi.Server do
   defp loop_acceptor(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
 
-    node = NodeManager.random_node()
     {:ok, pid} = Task.Supervisor.start_child(GymTcpApi.TaskSupervisor,
-        fn -> serve(client, node) end)
+        fn -> serve(client) end)
     :ok = :gen_tcp.controlling_process(client, pid)
     loop_acceptor(socket)
   end
 
-  defp serve(socket, node) do
+  defp serve(socket) do
     case :gen_tcp.recv(socket, 0, 1000) do
       {:ok, data} = _ ->
+        node = NodeManager.random_node(data)
         current = self()
         Node.spawn(node, __MODULE__, :pool_process, [data, current])
 

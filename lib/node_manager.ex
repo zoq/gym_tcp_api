@@ -10,7 +10,7 @@ defmodule GymTcpApi.NodeManager do
     Node.list ++ [Node.self]
   end
 
-  def random_node do
+  def random_node(_) do
     Enum.random(all_nodes)
   end
 end
