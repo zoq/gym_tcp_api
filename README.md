@@ -22,7 +22,7 @@ The server has the following dependencies:
 The c++ example agent has the following dependencies:
 
       Armadillo     >= 4.200.0
-      Boost (system, thread)
+      Boost (system, thread, iostreams)
       CMake         >= 2.8.5
 
 ## Installation
