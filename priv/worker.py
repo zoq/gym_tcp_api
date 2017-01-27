@@ -13,6 +13,11 @@ import uuid
 import numpy as np
 import gym
 
+try:
+  import zlib
+except ImportError:
+  pass
+
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -101,10 +106,10 @@ class Envs(object):
       # Many newer JSON parsers allow it, but many don't. Notably python json
       # module can read and write such floats. So we only here fix
       # "export version", also make it flat.
-      info['low']  = [(x if x != -np.inf else -1e100) for x in
-          np.array(space.low ).flatten()]
-      info['high'] = [(x if x != +np.inf else +1e100) for x in
-          np.array(space.high).flatten()]
+      # info['low']  = [(x if x != -np.inf else -1e100) for x in
+      #     np.array(space.low ).flatten()]
+      # info['high'] = [(x if x != +np.inf else +1e100) for x in
+      #     np.array(space.high).flatten()]
     elif info['name'] == 'HighLow':
       info['num_rows'] = space.num_rows
       info['matrix'] = [((float(x) if x != -np.inf else -1e100) if x != +np.inf
@@ -173,6 +178,13 @@ envs = Envs()
 enviroment = None
 instance_id = None
 close = True
+compressionLevel = 0
+
+def process_data(data, level = 0):
+  if level > 0:
+    return zlib.compress(data, level) + "\r\n\r\n"
+
+  return data + "\r\n\r\n"
 
 """
   Handle the incoming reponses.
@@ -182,19 +194,28 @@ def process_response(response):
   global instance_id
   global close
   global envs
+  global compressionLevel
 
   response = str(response)
   data = response.strip()
 
   if (len(data) == 0):
-    return "error\r\n\r\n"
+    return process_data("error", compressionLevel)
 
   jsonMessage = json.loads(data)
 
   enviroment = get_optional_params(jsonMessage, "env", "name")
   if isinstance(enviroment, basestring):
+    compressionLevel = 0
     envs.env_close_all()
     instance_id = envs.create(enviroment)
+
+  compression = get_optional_params(jsonMessage, "server", "compression")
+  if isinstance(compression, basestring):
+    try:
+      compressionLevel = int(compression)
+    except ValueError:
+      compressionLevel = 0
 
   actionspace = get_optional_params(jsonMessage, "env", "actionspace")
   if isinstance(actionspace, basestring):
@@ -202,7 +223,7 @@ def process_response(response):
       sample = envs.get_action_space_sample(instance_id)
 
       data = json.dumps({"sample" : sample})
-      return data + "\r\n\r\n"
+      return process_data(data, compressionLevel)
 
   envAction = get_optional_params(jsonMessage, "env", "action")
   if isinstance(envAction, basestring):
@@ -213,15 +234,15 @@ def process_response(response):
     elif envAction == "reset":
       observation = envs.reset(instance_id)
       data = json.dumps({"observation" : observation})
-      return data + "\r\n\r\n"
+      return process_data(data, compressionLevel)
     elif envAction == "actionspace":
       info = envs.get_action_space_info(instance_id)
       data = json.dumps({"info" : info})
-      return data + "\r\n\r\n"
+      return process_data(data, compressionLevel)
     elif envAction == "observationspace":
       info = envs.get_observation_space_info(instance_id)
       data = json.dumps({"info" : info})
-      return data + "\r\n\r\n"
+      return process_data(data, compressionLevel)
 
   step = get_optional_param(jsonMessage, "step")
   if step is not None:
@@ -237,7 +258,7 @@ def process_response(response):
                        "reward" : reward,
                        "done" : done,
                        "info" : info})
-    return data + "\r\n\r\n"
+    return process_data(data, compressionLevel)
 
   seed = get_optional_params(jsonMessage, "env", "seed")
   if isinstance(seed, basestring):

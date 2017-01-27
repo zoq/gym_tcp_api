@@ -42,8 +42,15 @@ static inline std::string MonitorStart(
       + ", \"directory\": \"" + directory + "\"}}";
 }
 
+//! Create message to set the compression level.
+static inline std::string ServerCompression(const size_t compression)
+{
+  return "{\"server\":{\"compression\": \"" +
+      std::to_string(compression) + "\"}}";
+}
+
 //! Create message to set the enviroment seed.
-static inline std::string EnvironmentSeed(const size_t& seed)
+static inline std::string EnvironmentSeed(const size_t seed)
 {
   return "{\"env\":{\"seed\": \"" + std::to_string(seed) + "\"}}";
 }
@@ -104,7 +111,7 @@ static inline std::string Step(
     actionStr += "]";
 
     std::string msg = "{\"step\":{\"action\":" + actionStr +
-      ", \"render\":" + std::to_string(render) + "}}";
+        ", \"render\":" + std::to_string(render) + "}}";
 
     return msg;
   }

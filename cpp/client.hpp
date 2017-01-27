@@ -8,11 +8,16 @@
 #define GYM_CLIENT_HPP
 
 #include <string>
+#include <sstream>
+
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/copy.hpp>
 
 namespace gym {
 
@@ -21,8 +26,6 @@ using boost::asio::deadline_timer;
 using boost::lambda::_1;
 using boost::lambda::var;
 using boost::lambda::bind;
-
-
 
 /**
  * Implementation of the Client.
@@ -47,7 +50,8 @@ class Client
    */
   Client() :
       s(io_service),
-      deadline(io_service)
+      deadline(io_service),
+      compressionLevel(0)
   {
     deadline.expires_at(boost::posix_time::pos_infin);
 
@@ -123,6 +127,19 @@ class Client
     data = std::string(
         boost::asio::buffers_begin(response.data()),
         boost::asio::buffers_begin(response.data()) + reply_length);
+
+    std::cout << data.length() << std::endl;
+
+    if (compressionLevel > 0)
+    {
+      boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+      in.push( boost::iostreams::zlib_decompressor());
+      in.push(boost::iostreams::array_source(data.data(), data.size()));
+
+      std::stringstream ss;
+      boost::iostreams::copy(in, ss);
+      data = ss.str();
+    }
   }
 
   /**
@@ -153,6 +170,17 @@ class Client
     }
   }
 
+  /*
+   * The compression level in range [0, 9] where 0 means no compression used for
+   * receiving data.
+   *
+   * @param compression The compression level.
+   */
+  void compression(const size_t compression)
+  {
+    compressionLevel = compression;
+  }
+
  private:
   void check_deadline()
   {
@@ -177,6 +205,9 @@ class Client
 
   //! Locally stored socket object.
   tcp::socket s;
+
+  //! Locally-stored compression parameter.
+  size_t compressionLevel;
 }; // class Client
 
 } // namespace gym

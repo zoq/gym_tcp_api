@@ -107,6 +107,13 @@ class Environment
    */
   void seed(const size_t s);
 
+  /*
+   * Sets the compression level in range [0, 9] where 0 means no compression.
+   *
+   * @param compression The compression level.
+   */
+  void compression(const size_t compression);
+
  private:
   //! Get the observation space information.
   void observationSpace();

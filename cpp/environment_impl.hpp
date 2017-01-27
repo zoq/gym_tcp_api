@@ -93,6 +93,12 @@ void Environment::seed(const size_t s)
   client.send(messages::EnvironmentSeed(s));
 }
 
+void Environment::compression(const size_t compression)
+{
+  client.compression(compression);
+  client.send(messages::ServerCompression(compression));
+}
+
 void Environment::observationSpace()
 {
   client.send(messages::EnvironmentObservationSpace());
