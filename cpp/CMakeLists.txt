@@ -38,7 +38,7 @@ find_package(Boost 1.49 COMPONENTS system thread iostreams REQUIRED)
 find_package(Armadillo 3.6.0 REQUIRED)
 
 # Include directories for the dependencies.
-include_directories(${CMAKE_SOURCE_DIR}/websocketpp)
+include_directories(${CMAKE_SOURCE_DIR}/rapidjson)
 include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

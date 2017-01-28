@@ -128,8 +128,6 @@ class Client
         boost::asio::buffers_begin(response.data()),
         boost::asio::buffers_begin(response.data()) + reply_length);
 
-    std::cout << data.length() << std::endl;
-
     if (compressionLevel > 0)
     {
       boost::iostreams::filtering_streambuf<boost::iostreams::input> in;

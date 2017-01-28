@@ -20,13 +20,14 @@ Parser::Parser()
 
 Parser::Parser(const std::string& data)
 {
+  document.Parse(data.c_str());
+
   parse(data);
 }
 
 void Parser::parse(const std::string& data)
 {
-  std::stringstream ss(data);
-  boost::property_tree::read_json(ss, pt);
+  document.Parse(data.c_str());
 }
 
 void Parser::actionSample(const Space* space, arma::mat& sample)
@@ -38,29 +39,32 @@ void Parser::actionSample(const Space* space, arma::mat& sample)
       sample = arma::mat(1, 1);
     }
 
-    for (ptree::const_iterator it = pt.begin(); it != pt.end(); ++it)
-    {
-      sample(0) = it->second.get_value<int>();
-    }
+    sample(0) = document["sample"].GetDouble();
   }
 }
 
 void Parser::info(double& reward, bool& done, std::string& info)
 {
-  for (ptree::const_iterator it = pt.begin();
-      it != pt.end(); ++it)
+  for (Value::ConstMemberIterator itr = document.MemberBegin();
+    itr != document.MemberEnd(); ++itr)
   {
-    if (std::string(it->first) == "reward")
+    std::string key = itr->name.GetString();
+
+    if (key == "reward")
     {
-      reward = it->second.get_value<float>();
+      reward = itr->value.GetDouble();
     }
-    else if (std::string(it->first) == "done")
+    else if (key == "done")
     {
-      done = it->second.get_value<bool>();
+      done = itr->value.GetBool();
     }
-    else if (std::string(it->first) == "info")
+    else if (key == "info")
     {
-      info = it->second.get_value<std::string>();
+      info = "";
+      for (auto& m : itr->value.GetObject())
+      {
+        info += " " + std::string(m.name.GetString());
+      }
     }
   }
 }
@@ -70,20 +74,22 @@ void Parser::observation(const Space* space, arma::mat& observation)
   if (space->boxShape.size() == 1)
   {
     observation = arma::mat(space->boxShape[0], 1);
-    vec(pt, "observation", observation);
+    const rapidjson::Value& array1 = document["observation"];
+    vec(array1, observation);
   }
   else if (space->boxShape.size() == 2)
   {
     observation = arma::mat(space->boxShape[1], space->boxShape[0]);
 
     size_t elem = 0;
-    for (ptree::value_type &row : pt.get_child("observation"))
+    const rapidjson::Value& array1 = document["observation"];
+    for (rapidjson::SizeType i = 0; i < array1.Size(); i++)
     {
-        int y = 0;
-        for (ptree::value_type &cell : row.second)
-        {
-            observation(elem++) = cell.second.get_value<float>();
-        }
+      const rapidjson::Value& array2 = array1[i];
+      for (rapidjson::SizeType j = 0; j < array2.Size(); j++)
+      {
+        observation(elem++) = array2[j].GetDouble();
+      }
     }
 
     observation = observation.t();
@@ -95,18 +101,20 @@ void Parser::observation(const Space* space, arma::mat& observation)
         space->boxShape[2]);
 
     size_t elem = 0;
-    for (ptree::value_type &row : pt.get_child("observation"))
+    const rapidjson::Value& array1 = document["observation"];
+    for (rapidjson::SizeType i = 0; i < array1.Size(); i++)
     {
-        for (ptree::value_type &cellO : row.second)
+      const rapidjson::Value& array2 = array1[i];
+      for (rapidjson::SizeType j = 0; j < array2.Size(); j++)
+      {
+        size_t z = 0;
+        const rapidjson::Value& array3 = array2[j];
+        for (rapidjson::SizeType k = 0; k < array3.Size(); k++, elem++, z++)
         {
-          size_t z = 0;
-          for (ptree::value_type &cellI : cellO.second)
-          {
-            temp.slice(z)(elem) = cellI.second.get_value<float>();
-          }
-
-          elem++;
+          elem = elem % observation.n_rows;
+          temp.slice(z)(elem) = array3[k].GetDouble();
         }
+      }
     }
 
     for (size_t i = 0; i < space->boxShape[2]; ++i)
@@ -119,81 +127,69 @@ void Parser::observation(const Space* space, arma::mat& observation)
 
 void Parser::space(Space* space)
 {
-  ptree::const_iterator end = pt.get_child("info").end();
-
-  for (ptree::const_iterator it = pt.get_child("info").begin();
-      it != end; ++it)
+  for (Value::ConstMemberIterator itr = document["info"].MemberBegin();
+    itr != document["info"].MemberEnd(); ++itr)
   {
-    if (std::string(it->first) == "name")
+    std::string key = itr->name.GetString();
+
+    if (key == "name")
     {
-      if (it->second.get_value<std::string>() == "MultiDiscrete")
+      std::string value = itr->value.GetString();
+
+      if (value == "MultiDiscrete")
       {
         space->type = Space::MULTIDISCRETE;
       }
-      else if (it->second.get_value<std::string>() == "Discrete")
+      else if (value == "Discrete")
       {
         space->type = Space::DISCRETE;
       }
-      else if (it->second.get_value<std::string>() == "Box")
+      else if (value == "Box")
       {
         space->type = Space::BOX;
       }
     }
-    else if (std::string(it->first) == "n")
+    else if (key == "n")
     {
-      space->n = it->second.get_value<int>();
+      space->n = itr->value.GetInt();
     }
-    else if (std::string(it->first) == "high")
+    else if (key == "high")
     {
-      vec(it->second, it->second.get_value<std::string>(), space->boxHigh);
+      vec(itr->value, space->boxHigh);
     }
-    else if (std::string(it->first) == "low")
+    else if (key == "low")
     {
-      vec(it->second, it->second.get_value<std::string>(), space->boxLow);
+      vec(itr->value, space->boxLow);
     }
-    else if (std::string(it->first) == "shape")
+    else if (key == "shape")
     {
-      vec(it->second, it->second.get_value<std::string>(), space->boxShape);
+      vec(itr->value, space->boxShape);
     }
   }
 }
 
-void Parser::vec(
-    const ptree& pt, const ptree::key_type& key, arma::mat& v, int row)
+void Parser::vec(const Value& vector, arma::mat& v)
 {
-  int col = 0;
-  for (auto& item : pt.get_child(key))
+  size_t idx = 0;
+  for (auto& elem : vector.GetArray())
   {
-    v(row, col++) = item.second.get_value<int>();
+    v(idx++) = elem.GetDouble();
   }
 }
 
-void Parser::vec(const ptree& pt, const std::string& key, arma::mat& v)
+void Parser::vec(const Value& vector, std::vector<float>& v)
 {
-  int elem = 0;
-  for (auto& item : pt.get_child(key))
+  for (auto& elem : vector.GetArray())
   {
-    v(elem++) = item.second.get_value<float>();
+    v.push_back(elem.GetFloat());
   }
 }
 
-void Parser::vec(
-    const ptree& pt, const ptree::key_type& key, std::vector<float>& v)
+void Parser::vec(const Value& vector, std::vector<int>& v)
 {
-  int col = 0;
-  for (auto& item : pt.get_child(key))
+  for (auto& elem : vector.GetArray())
   {
-    v.push_back(item.second.get_value<float>());
-  }
-}
-
-void Parser::vec(
-    const ptree& pt, const ptree::key_type& key, std::vector<int>& v)
-{
-  int col = 0;
-  for (auto& item : pt.get_child(key))
-  {
-    v.push_back(item.second.get_value<int>());
+    v.push_back(elem.GetInt());
   }
 }
 

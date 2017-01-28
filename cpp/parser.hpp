@@ -10,13 +10,13 @@
 #include <string>
 #include <armadillo>
 
-#define BOOST_SPIRIT_THREADSAFE
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include "rapidjson/document.h"
 
 namespace gym {
 
-using boost::property_tree::ptree;
+using namespace rapidjson;
+
+
 class Space;
 
 /**
@@ -79,23 +79,19 @@ class Parser
 
  private:
   //! Store results of the given json string in the row'th of the given
-  // matrix v.
-  void vec(const ptree& pt, const ptree::key_type& key, arma::mat& v, int row);
+  //! matrix v.
+  void vec(const Value& vector, arma::mat& v);
 
   //! Store results of the given json string in the row'th of the given
-  // matrix v.
-  void vec(const ptree& pt, const std::string& key, arma::mat& v);
+  //! matrix v.
+  void vec(const Value& vector, std::vector<float>& v);
 
   //! Store results of the given json string in the row'th of the given
-  // matrix v.
-  void vec(const ptree& pt, const ptree::key_type& key, std::vector<float>& v);
+  //! matrix v.
+  void vec(const Value& vector, std::vector<int>& v);
 
-  //! Store results of the given json string in the row'th of the given
-  // matrix v.
-  void vec(const ptree& pt, const ptree::key_type& key, std::vector<int>& v);
-
-  //! Locally stored property_tree to parse the json string.
-  ptree pt;
+  //! Locally-stored document to parse the json string.
+  Document document;
 };
 
 } // namespace gym
