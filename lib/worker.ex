@@ -30,7 +30,7 @@ defmodule GymTcpApi.Worker do
     receive do
       {:data, message, c} ->
           handle_call({message, caller}, :ok, python);
-      {:close, message} -> message
+      {:close, message} -> :python.call(python, :worker, :process_response, [""])
     end
 
     {:reply, [""], python}

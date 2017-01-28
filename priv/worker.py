@@ -11,7 +11,9 @@ from erlport import erlang
 import json
 import uuid
 import numpy as np
+
 import gym
+from gym.wrappers.monitoring import Monitor
 
 try:
   import zlib
@@ -37,13 +39,13 @@ logger.setLevel(logging.INFO)
 class Envs(object):
   def __init__(self):
     self.envs = {}
-    self.id_len = 8
+    self.id_len = 13
 
   def _lookup_env(self, instance_id):
     try:
       return self.envs[instance_id]
     except KeyError:
-      raise InvalidUsage('Instance_id {} unknown'.format(instance_id))
+      return None
 
   def _remove_env(self, instance_id):
     try:
@@ -124,7 +126,7 @@ class Envs(object):
 
   def monitor_start(self, instance_id, directory, force, resume):
     env = self._lookup_env(instance_id)
-    env.monitor.start(directory, force=force, resume=resume)
+    self.envs[instance_id] = Monitor(env, directory, None, force, resume)
 
   def monitor_close(self, instance_id):
     env = self._lookup_env(instance_id)
@@ -132,8 +134,10 @@ class Envs(object):
 
   def env_close(self, instance_id):
     env = self._lookup_env(instance_id)
-    env.close()
-    self._remove_env(instance_id)
+
+    if env != None:
+      env.close()
+      self._remove_env(instance_id)
 
   def env_close_all(self):
     for key in self.envs.keys():
@@ -200,6 +204,7 @@ def process_response(response):
   data = response.strip()
 
   if (len(data) == 0):
+    envs.env_close_all()
     return process_data("error", compressionLevel)
 
   jsonMessage = json.loads(data)
@@ -207,7 +212,9 @@ def process_response(response):
   enviroment = get_optional_params(jsonMessage, "env", "name")
   if isinstance(enviroment, basestring):
     compressionLevel = 0
-    envs.env_close_all()
+    if instance_id != None:
+      envs.env_close(instance_id)
+
     instance_id = envs.create(enviroment)
 
   compression = get_optional_params(jsonMessage, "server", "compression")
@@ -216,6 +223,7 @@ def process_response(response):
       compressionLevel = int(compression)
     except ValueError:
       compressionLevel = 0
+      close = True
 
   actionspace = get_optional_params(jsonMessage, "env", "actionspace")
   if isinstance(actionspace, basestring):
