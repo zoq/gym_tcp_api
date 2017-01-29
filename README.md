@@ -9,6 +9,7 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
   1. [Dependencies](#dependencies)
   2. [Installation](#installation)
   3. [Getting started](#getting-started)
+  3. [Demo](#demo)
   4. [Distributed Server](#distributed-server)
   5. [API specification](#api-specification)
 
@@ -67,6 +68,14 @@ To start the server from the command line, run:
 In a separate terminal, you can then run the example agent:
 
       $ ./example
+
+## Demo
+
+The distributed demo server is reachable at ```kurg.org (port 4040```) and can be used for testing. Each node provides access to the Classic control and Atari environments. Note that each node has limited resources so that the response time might vary. If you record your algorithm's performance on an environment you can access the video and metadata at https://kurg.org/media/gym/
+
+<p align="center">
+<img src="https://kurg.org/media/breakout_sample.gif" alt="breakout sample image sequence"> <img src="https://kurg.org/media/space_invaders_sample.gif" alt="breakout sample image sequence"> <img src="https://kurg.org/media/enduro_sample.gif" alt="breakout sample image sequence">
+</p>
 
 ## Distributed Server
 
