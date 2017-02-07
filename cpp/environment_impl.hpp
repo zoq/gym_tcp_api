@@ -38,6 +38,11 @@ void Environment::make(const std::string& environment)
 {
   client.send(messages::EnvironmentName(environment));
 
+  std::string json;
+  client.receive(json);
+  parser.parse(json);
+  parser.environment(instance);
+
   observationSpace();
   actionSpace();
 

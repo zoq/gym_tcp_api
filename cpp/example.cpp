@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
   env.reset();
   env.render();
 
-
   while (1)
   {
     arma::mat action = env.action_space.sample();
@@ -47,8 +46,8 @@ int main(int argc, char* argv[])
       << totalReward << std::endl;
   }
 
-  std::cout << "Total steps: " << totalSteps << " reward: " << totalReward
-      << std::endl;
+  std::cout << "Instance: " << env.instance << " total steps: " << totalSteps
+      << " reward: " << totalReward << std::endl;
 
   return 0;
 }

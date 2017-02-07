@@ -44,6 +44,9 @@ class Environment
   //! Locally-stored observation object.
   arma::mat observation;
 
+  //! Locally-stored instance identifier.
+  std::string instance;
+
   /**
    * Instantiate the Environment object.
    */

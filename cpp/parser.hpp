@@ -77,6 +77,13 @@ class Parser
    */
   void info(double& reward, bool& done, std::string& info);
 
+  /**
+   * Parse the environment data.
+   *
+   * @param instance The instance identifier.
+   */
+  void environment(std::string& instance);
+
  private:
   //! Store results of the given json string in the row'th of the given
   //! matrix v.

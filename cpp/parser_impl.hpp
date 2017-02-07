@@ -69,6 +69,20 @@ void Parser::info(double& reward, bool& done, std::string& info)
   }
 }
 
+void Parser::environment(std::string& instance)
+{
+  for (Value::ConstMemberIterator itr = document.MemberBegin();
+    itr != document.MemberEnd(); ++itr)
+  {
+    std::string key = itr->name.GetString();
+
+    if (key == "instance")
+    {
+      instance = itr->value.GetString();
+    }
+  }
+}
+
 void Parser::observation(const Space* space, arma::mat& observation)
 {
   if (space->boxShape.size() == 1)

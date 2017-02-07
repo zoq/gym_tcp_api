@@ -216,6 +216,8 @@ def process_response(response):
       envs.env_close(instance_id)
 
     instance_id = envs.create(enviroment)
+    data = json.dumps({"instance" : instance_id})
+    return process_data(data, compressionLevel)
 
   compression = get_optional_params(jsonMessage, "server", "compression")
   if isinstance(compression, basestring):
