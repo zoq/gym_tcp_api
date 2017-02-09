@@ -32,4 +32,4 @@ use Mix.Config
 config :gym_tcp_api,
   port: 4040,
   worker: 4,
-  distributed: true
+  distributed: false
