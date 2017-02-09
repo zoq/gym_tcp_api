@@ -38,5 +38,6 @@ defmodule GymTcpApi.Worker do
 
   def process(pid, data, caller) do
     :gen_server.call(pid, {data, caller});
+    :poolboy.checkin(GymTcpApi.pool_name(), pid)
   end
 end

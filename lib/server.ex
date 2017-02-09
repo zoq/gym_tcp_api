@@ -36,7 +36,12 @@ defmodule GymTcpApi.Server do
       {:ok, data} = _ ->
         node = NodeManager.random_node(data)
         current = self()
-        Node.spawn(node, __MODULE__, :pool_process, [data, current])
+
+        if Application.get_env(:gym_tcp_api, :distributed) == true do
+          Node.spawn(node, __MODULE__, :pool_process, [data, current])
+        else
+          pool_process(data, current)
+        end
 
         receive do
           {:response, response, worker} ->
@@ -88,10 +93,7 @@ defmodule GymTcpApi.Server do
   end
 
   def pool_process(data, caller) do
-    :poolboy.transaction(
-      GymTcpApi.pool_name(),
-      fn(pid) -> GymTcpApi.Worker.process(pid, data, caller) end,
-      :infinity
-    );
+    worker = :poolboy.checkout(:gym_pool)
+    spawn(fn() -> GymTcpApi.Worker.process(worker, data, caller) end)
   end
 end
