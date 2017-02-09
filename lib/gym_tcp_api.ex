@@ -15,7 +15,8 @@ defmodule GymTcpApi do
       {:name, {:local, pool_name()}},
       {:worker_module, GymTcpApi.Worker},
       {:size, Application.get_env(:gym_tcp_api, :worker)},
-      {:max_overflow, 0}
+      {:max_overflow, 0},
+      {:strategy, :fifo}
     ]
 
     children = [
