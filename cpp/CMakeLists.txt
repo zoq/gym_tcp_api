@@ -5,7 +5,7 @@ project(gym-tcp-api)
 add_definitions("-Wno-deprecated-declarations")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O3 -fPIC -ffast-math ${CMAKE_CXX_FLAGS}")
-SET(CMAKE_C_FLAGS "-std=c99 -O3 ${CMAKE_C_FLAGS}")
+SET(CMAKE_C_FLAGS "-std=c99 -O3 ${CMAKE_C_FLAGS} -lz")
 
 # If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
@@ -34,7 +34,14 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 set(Boost_ADDITIONAL_VERSIONS
   "1.49.0" "1.50.0" "1.51.0" "1.52.0" "1.53.0" "1.54.0" "1.55.0")
 
-find_package(Boost 1.49 COMPONENTS system thread iostreams REQUIRED)
+find_package(Boost 1.49 COMPONENTS system thread iostreams)
+
+if (NOT Boost_FOUND)
+  # Try again with non-multithreaded libraries ('mt' tag).
+  set(Boost_USE_MULTITHREADED OFF)
+  find_package(Boost 1.49 COMPONENTS system thread iostreams REQUIRED)
+endif()
+
 find_package(Armadillo 3.6.0 REQUIRED)
 
 # Include directories for the dependencies.
