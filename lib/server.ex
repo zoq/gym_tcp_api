@@ -32,7 +32,7 @@ defmodule GymTcpApi.Server do
   end
 
   defp serve(socket) do
-    case :gen_tcp.recv(socket, 0, 1000) do
+    case :gen_tcp.recv(socket, 0, 5000) do
       {:ok, data} = _ ->
         node = NodeManager.random_node(data)
         current = self()
@@ -58,7 +58,7 @@ defmodule GymTcpApi.Server do
   end
 
   defp handle(socket, worker) do
-    case :gen_tcp.recv(socket, 0, 1000) do
+    case :gen_tcp.recv(socket, 0, 5000) do
       {:ok, data} = _ ->
         current = self()
         send(worker, {:data, data, current})
