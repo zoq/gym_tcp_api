@@ -1,6 +1,11 @@
 cmake_minimum_required (VERSION 2.8)
 project(gym-tcp-api)
 
+# Include modules in the CMake directory.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+set(MLPACK_INCLUDE_DIR "/usr/local/include/mlpack")
+set(MLPACK_LIBRARY "/usr/local/lib/libmlpack.so")
+
 # Set the CFLAGS and CXXFLAGS.
 add_definitions("-Wno-deprecated-declarations")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -43,6 +48,16 @@ if (NOT Boost_FOUND)
 endif()
 
 find_package(Armadillo 3.6.0 REQUIRED)
+find_package(Mlpack REQUIRED)
+find_package(OpenMP)
+if (OPENMP_FOUND)
+  add_definitions(-DHAS_OPENMP)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+else ()
+  # Disable warnings for all the unknown OpenMP pragmas.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+endif ()
 
 # Include directories for the dependencies.
 include_directories(${CMAKE_SOURCE_DIR}/rapidjson)
@@ -50,12 +65,14 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${MLPACK_INCLUDE_DIR})
 
 MESSAGE(STATUS ${Boost_LIBRARIES})
 
 # Set source file path.
 set(gym_tcp_api_source
-    example.cpp
+    Agents/EvolutionStrategy.cpp
+    Agents/EvolutionStrategy.hpp
     parser.hpp
     parser_impl.hpp
     space.hpp
@@ -71,4 +88,4 @@ set(gym_tcp_api_source
 # Define the executable and link against the libraries we need to build the
 # source.
 add_executable(example ${gym_tcp_api_source})
-target_link_libraries(example ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES})
+target_link_libraries(example ${Boost_LIBRARIES} ${ARMADILLO_LIBRARIES} ${MLPACK_LIBRARY})
