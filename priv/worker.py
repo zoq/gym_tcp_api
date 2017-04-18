@@ -156,7 +156,7 @@ class Envs(object):
       self._remove_env(instance_id)
 
   def env_close_all(self):
-    for key in self.envs.keys():
+    for key in list(self.envs.keys()):
         self.env_close(key)
 
 """
