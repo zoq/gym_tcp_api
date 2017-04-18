@@ -49,7 +49,7 @@ else:
     year = {2016},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {url{https://github.com/openai/gym-http-api}}
+    howpublished = {\\url{https://github.com/openai/gym-http-api}}
   }
 """
 class Envs(object):
@@ -216,7 +216,7 @@ def process_response(response):
   global envs
   global compressionLevel
 
-  response = str(response, "utf-8")
+  response = unicode(response, "utf-8")
   data = response.strip()
 
   if (len(data) == 0):
