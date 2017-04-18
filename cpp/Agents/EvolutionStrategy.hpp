@@ -23,7 +23,7 @@ class EvolutionStrategyAgent{
   frameH(frameH),
   num_actions(num_actions)
   {
-    model = randn(num_actions, frameW * frameH * 3);
+    model = randu(num_actions, frameW * frameH * 3);
   }
 
   void Play(string environment,
@@ -35,13 +35,11 @@ class EvolutionStrategyAgent{
     double alpha = 0.005; // Learning Rate
     size_t input = frameW * frameH * 3;
     
+    mat workerRewards(num_workers, 1);
+    vector<mat> epsilons(num_workers);
+
     while(1)
     {
-      mat workerRewards(num_workers, 1);
-      vector<mat> epsilons(num_workers);
-      vector<Environment> environments(num_workers,
-                          Environment(host, port, environment));
-
       #pragma omp parallel for
       for(size_t i = 0; i < num_workers; i++)
       {
@@ -50,7 +48,7 @@ class EvolutionStrategyAgent{
 
         epsilons[i] = epsilon;
 
-        Environment& env = environments[i];
+        Environment env(host, port, environment);
         
         env.compression(9);
         
@@ -84,7 +82,7 @@ class EvolutionStrategyAgent{
           }
         }
         
-        env.reset();
+        env.close();
 
         workerRewards[i] = totalReward;
       }
