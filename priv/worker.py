@@ -49,7 +49,7 @@ else:
     year = {2016},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {\\url{https://github.com/openai/gym-http-api}}
+    howpublished = {https://github.com/openai/gym-http-api}
   }
 """
 class Envs(object):
