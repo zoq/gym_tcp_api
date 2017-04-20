@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 2.8)
 project(gym-tcp-api)
 
+# Include modules in the CMake directory.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
 # Set the CFLAGS and CXXFLAGS.
 add_definitions("-Wno-deprecated-declarations")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")

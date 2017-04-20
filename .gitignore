@@ -21,3 +21,6 @@ build*
 
 # Python byte code.
 *.pyc
+
+# Dummy folder with all gym recordings and metadata
+/dummy

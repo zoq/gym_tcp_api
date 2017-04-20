@@ -24,6 +24,22 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
+try:
+    unicode = unicode
+except NameError:
+    # 'unicode' is undefined, must be Python 3
+    str = str
+    unicode = str
+    bytes = bytes
+    basestring = (str,bytes)
+else:
+    # 'unicode' exists, must be Python 2
+    str = str
+    unicode = unicode
+    bytes = str
+    basestring = basestring
+
 """
   Container and manager for the environments instantiated
   on this server. The Envs class is based on the gym-http-api project
@@ -33,7 +49,7 @@ logger.setLevel(logging.INFO)
     year = {2016},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {\url{https://github.com/openai/gym-http-api}}
+    howpublished = {https://github.com/openai/gym-http-api}
   }
 """
 class Envs(object):
@@ -140,7 +156,7 @@ class Envs(object):
       self._remove_env(instance_id)
 
   def env_close_all(self):
-    for key in self.envs.keys():
+    for key in list(self.envs.keys()):
         self.env_close(key)
 
 """
@@ -186,7 +202,7 @@ compressionLevel = 0
 
 def process_data(data, level = 0):
   if level > 0:
-    return zlib.compress(data, level) + "\r\n\r\n"
+    return zlib.compress(data.encode(), level) + b"\r\n\r\n"
 
   return data + "\r\n\r\n"
 
@@ -200,7 +216,7 @@ def process_response(response):
   global envs
   global compressionLevel
 
-  response = str(response)
+  response = unicode(response, "utf-8")
   data = response.strip()
 
   if (len(data) == 0):

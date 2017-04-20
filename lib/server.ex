@@ -86,7 +86,7 @@ defmodule GymTcpApi.Server do
   end
 
   def write_line(socket, {:ok, text}) do
-    if String.strip(text) === "" do
+    if String.trim(to_string(text)) === "" do
     else
       :gen_tcp.send(socket, text)
     end
