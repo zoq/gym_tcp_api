@@ -58,7 +58,8 @@ MESSAGE(STATUS ${Boost_LIBRARIES})
 
 # Set source file path.
 set(gym_tcp_api_source
-    example.cpp
+    Agents/EvolutionStrategy.cpp
+    # example.cpp
     parser.hpp
     parser_impl.hpp
     space.hpp
