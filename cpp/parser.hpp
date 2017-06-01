@@ -10,11 +10,9 @@
 #include <string>
 #include <armadillo>
 
-#include "rapidjson/document.h"
+#include "pjson/pjson.h"
 
 namespace gym {
-
-using namespace rapidjson;
 
 
 class Space;
@@ -37,6 +35,11 @@ class Parser
    * @param data The data encoded as json string.
    */
   Parser(const std::string& data);
+
+  /*
+   * Deconstructor to delete the datastream.
+   */
+  ~Parser();
 
   /**
    * Parse the specified json string and create a tree to extract the
@@ -87,18 +90,23 @@ class Parser
  private:
   //! Store results of the given json string in the row'th of the given
   //! matrix v.
-  void vec(const Value& vector, arma::mat& v);
+  void vec(const pjson::value_variant_vec_t& vector, arma::mat& v);
+
+  // void vec(pjson::value_variant_vec_t&, arma::mat& v);
 
   //! Store results of the given json string in the row'th of the given
   //! matrix v.
-  void vec(const Value& vector, std::vector<float>& v);
+  void vec(const pjson::value_variant_vec_t& vector, std::vector<float>& v);
 
   //! Store results of the given json string in the row'th of the given
   //! matrix v.
-  void vec(const Value& vector, std::vector<int>& v);
+  void vec(const pjson::value_variant_vec_t& vector, std::vector<int>& v);
 
   //! Locally-stored document to parse the json string.
-  Document document;
+  pjson::document doc;
+
+  //! Locally-stored data stream.
+  char* dataStream;
 };
 
 } // namespace gym

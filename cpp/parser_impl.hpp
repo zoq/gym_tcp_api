@@ -18,16 +18,27 @@ Parser::Parser()
   // Nothing to do here.
 }
 
+Parser::~Parser()
+{
+  if ((dataStream != NULL) && (dataStream[0] == '\0'))
+    delete[] dataStream;
+}
+
 Parser::Parser(const std::string& data)
 {
-  document.Parse(data.c_str());
-
   parse(data);
 }
 
 void Parser::parse(const std::string& data)
 {
-  document.Parse(data.c_str());
+  if ((dataStream != NULL) && (dataStream[0] == '\0'))
+    delete[] dataStream;
+
+  dataStream = new char[data.size() + 1];
+  std::copy(data.begin(), data.end(), dataStream);
+  dataStream[data.size()] = '\0';
+
+  doc.deserialize_in_place(dataStream);
 }
 
 void Parser::actionSample(const Space* space, arma::mat& sample)
@@ -39,70 +50,51 @@ void Parser::actionSample(const Space* space, arma::mat& sample)
       sample = arma::mat(1, 1);
     }
 
-    sample(0) = document["sample"].GetDouble();
+    sample(0) = doc.get_object()[0].get_value().as_double();
   }
 }
 
 void Parser::info(double& reward, bool& done, std::string& info)
 {
-  for (Value::ConstMemberIterator itr = document.MemberBegin();
-    itr != document.MemberEnd(); ++itr)
-  {
-    std::string key = itr->name.GetString();
+  const pjson::value_variant* doneValue = doc.find_value_variant("done");
+  if (doneValue != NULL)
+    done = doneValue->as_bool();
 
-    if (key == "reward")
-    {
-      reward = itr->value.GetDouble();
-    }
-    else if (key == "done")
-    {
-      done = itr->value.GetBool();
-    }
-    else if (key == "info")
-    {
-      info = "";
-      for (auto& m : itr->value.GetObject())
-      {
-        info += " " + std::string(m.name.GetString());
-      }
-    }
-  }
+  const pjson::value_variant* rewardValue = doc.find_value_variant("reward");
+  if (rewardValue != NULL)
+    reward = rewardValue->as_double();
 }
 
 void Parser::environment(std::string& instance)
 {
-  for (Value::ConstMemberIterator itr = document.MemberBegin();
-    itr != document.MemberEnd(); ++itr)
+  pjson::key_value_vec_t& obj = doc.get_object();
+  for (size_t i = 0u; i < obj.size(); ++i)
   {
-    std::string key = itr->name.GetString();
-
-    if (key == "instance")
-    {
-      instance = itr->value.GetString();
-    }
+    if (std::strncmp("instance", obj[i].get_key().m_p, 8) == 0)
+      instance = obj[i].get_value().get_string_ptr();
   }
 }
 
 void Parser::observation(const Space* space, arma::mat& observation)
 {
+  const pjson::value_variant* value = doc.find_value_variant("observation");
   if (space->boxShape.size() == 1)
   {
     observation = arma::mat(space->boxShape[0], 1);
-    const rapidjson::Value& array1 = document["observation"];
-    vec(array1, observation);
+    vec(value->get_array(), observation);
   }
   else if (space->boxShape.size() == 2)
   {
     observation = arma::mat(space->boxShape[1], space->boxShape[0]);
 
     size_t elem = 0;
-    const rapidjson::Value& array1 = document["observation"];
-    for (rapidjson::SizeType i = 0; i < array1.Size(); i++)
+    const pjson::value_variant_vec_t& array1 = value->get_array();
+    for (size_t i = 0; i < array1.size(); i++)
     {
-      const rapidjson::Value& array2 = array1[i];
-      for (rapidjson::SizeType j = 0; j < array2.Size(); j++)
+      const pjson::value_variant_vec_t& array2 = array1[i].get_array();
+      for (size_t j = 0; j < array2.size(); j++)
       {
-        observation(elem++) = array2[j].GetDouble();
+        observation(elem++) = array2[j].as_double();
       }
     }
 
@@ -115,18 +107,18 @@ void Parser::observation(const Space* space, arma::mat& observation)
         space->boxShape[2]);
 
     size_t elem = 0;
-    const rapidjson::Value& array1 = document["observation"];
-    for (rapidjson::SizeType i = 0; i < array1.Size(); i++)
+    const pjson::value_variant_vec_t& array1 = value->get_array();
+    for (size_t i = 0; i < array1.size(); i++)
     {
-      const rapidjson::Value& array2 = array1[i];
-      for (rapidjson::SizeType j = 0; j < array2.Size(); j++)
+      const pjson::value_variant_vec_t& array2 = array1[i].get_array();
+      for (size_t j = 0; j < array2.size(); j++)
       {
         size_t z = 0;
-        const rapidjson::Value& array3 = array2[j];
-        for (rapidjson::SizeType k = 0; k < array3.Size(); k++, elem++, z++)
+        const pjson::value_variant_vec_t& array3 = array2[j].get_array();
+        for (size_t k = 0; k < array3.size(); k++, elem++, z++)
         {
           elem = elem % observation.n_rows;
-          temp.slice(z)(elem) = array3[k].GetDouble();
+          temp.slice(z)(elem) = array3[k].as_double();
         }
       }
     }
@@ -141,70 +133,66 @@ void Parser::observation(const Space* space, arma::mat& observation)
 
 void Parser::space(Space* space)
 {
-  for (Value::ConstMemberIterator itr = document["info"].MemberBegin();
-    itr != document["info"].MemberEnd(); ++itr)
+  const pjson::key_value_vec_t& obj = doc.find_value_variant(
+      "info")->get_object();
+  for (size_t i = 0u; i < obj.size(); ++i)
   {
-    std::string key = itr->name.GetString();
-
-    if (key == "name")
+    if (std::strncmp("name", obj[i].get_key().m_p, 4) == 0)
     {
-      std::string value = itr->value.GetString();
-
-      if (value == "MultiDiscrete")
+      if (std::strncmp("MultiDiscrete",
+          obj[i].get_value().get_string_ptr(), 13) == 0)
       {
         space->type = Space::MULTIDISCRETE;
       }
-      else if (value == "Discrete")
+      else if (std::strncmp("Discrete",
+          obj[i].get_value().get_string_ptr(), 8) == 0)
       {
         space->type = Space::DISCRETE;
       }
-      else if (value == "Box")
+      else if (std::strncmp("Box",
+          obj[i].get_value().get_string_ptr(), 3) == 0)
       {
         space->type = Space::BOX;
       }
     }
-    else if (key == "n")
+    else if (std::strncmp("n", obj[i].get_key().m_p, 1) == 0)
     {
-      space->n = itr->value.GetInt();
+      space->n = obj[i].get_value().as_int64();
     }
-    else if (key == "high")
+    else if (std::strncmp("high", obj[i].get_key().m_p, 4) == 0)
     {
-      vec(itr->value, space->boxHigh);
+      vec(obj[i].get_value().get_array(), space->boxHigh);
     }
-    else if (key == "low")
+    else if (std::strncmp("low", obj[i].get_key().m_p, 3) == 0)
     {
-      vec(itr->value, space->boxLow);
+      vec(obj[i].get_value().get_array(), space->boxLow);
     }
-    else if (key == "shape")
+    else if (std::strncmp("shape", obj[i].get_key().m_p, 5) == 0)
     {
-      vec(itr->value, space->boxShape);
+      vec(obj[i].get_value().get_array(), space->boxShape);
     }
   }
 }
 
-void Parser::vec(const Value& vector, arma::mat& v)
+void Parser::vec(const pjson::value_variant_vec_t& vector, arma::mat& v)
 {
   size_t idx = 0;
-  for (auto& elem : vector.GetArray())
-  {
-    v(idx++) = elem.GetDouble();
-  }
+  for (pjson::uint i = 0; i < vector.size(); ++i)
+    v(idx++) = vector[i].as_double();
 }
 
-void Parser::vec(const Value& vector, std::vector<float>& v)
+void Parser::vec(
+    const pjson::value_variant_vec_t& vector, std::vector<float>& v)
 {
-  for (auto& elem : vector.GetArray())
-  {
-    v.push_back(elem.GetFloat());
-  }
+  for (pjson::uint i = 0; i < vector.size(); ++i)
+    v.push_back(vector[i].as_float());
 }
 
-void Parser::vec(const Value& vector, std::vector<int>& v)
+void Parser::vec(
+    const pjson::value_variant_vec_t& vector, std::vector<int>& v)
 {
-  for (auto& elem : vector.GetArray())
-  {
-    v.push_back(elem.GetInt());
-  }
+  for (pjson::uint i = 0; i < vector.size(); ++i)
+    v.push_back(vector[i].as_int64());
 }
 
 } // namespace gym
