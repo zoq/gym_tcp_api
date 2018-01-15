@@ -13,7 +13,7 @@
 
 namespace gym {
 
-Parser::Parser()
+Parser::Parser() : dataStream(0)
 {
   // Nothing to do here.
 }
