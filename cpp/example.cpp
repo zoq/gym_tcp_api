@@ -13,7 +13,7 @@ using namespace gym;
 
 int main(int argc, char* argv[])
 {
-  const std::string environment = "SpaceInvaders-v0";
+  const std::string environment = "CartPole-v0";
   const std::string host = "kurg.org";
   const std::string port = "4040";
 
