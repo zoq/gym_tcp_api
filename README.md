@@ -94,7 +94,7 @@ In the interactive shell of the second node type:
     $ Node.connect :'one@192.168.0.103'
 
 ## API specification
-We use JSON is an a format to cimmunicate with the server.
+We use JSON as the format to cimmunicate with the server.
 
 Create the specified environment:
 
