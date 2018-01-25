@@ -49,5 +49,9 @@ int main(int argc, char* argv[])
   std::cout << "Instance: " << env.instance << " total steps: " << totalSteps
       << " reward: " << totalReward << std::endl;
 
+  std::cout << "Video: https://kurg.org/media/gym/" << env.instance
+      << " (it might take some minutes before the video is accessible)."
+      << std::endl;
+
   return 0;
 }
