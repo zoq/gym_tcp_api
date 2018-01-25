@@ -48,7 +48,7 @@ endif()
 find_package(Armadillo 3.6.0 REQUIRED)
 
 # Include directories for the dependencies.
-include_directories(${CMAKE_SOURCE_DIR}/rapidjson)
+include_directories(${CMAKE_SOURCE_DIR}/pjson)
 include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
