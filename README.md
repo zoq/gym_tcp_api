@@ -55,7 +55,7 @@ The next step is to run CMake to configure the project. Running CMake is the equ
 
       $ cmake ../
 
-Once CMake is configured, building the the example agent is as simple as typing 'make'.
+Once CMake is configured, building the example agent is as simple as typing 'make'.
 
       $ make
 
@@ -108,7 +108,7 @@ Reset the state of the environment:
 
     {"env" {"action": "reset"}}
 
-Set the the enviroment seed:
+Set the enviroment seed:
 
     {"env" {"seed": "3"}}
 
