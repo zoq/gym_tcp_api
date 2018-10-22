@@ -31,7 +31,7 @@ defmodule GymTcpApi.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:erlport, git: "https://github.com/hdima/erlport.git"},
+      {:erlport, "~> 0.10.0"},
       {:poolboy, "~> 1.5"}
     ]
   end
