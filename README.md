@@ -158,6 +158,7 @@ Close the monitor:
     ```
     rm "~/.hex/cache.ets"
     ```
+    
 <b>3. When you run a client, if you get the following error.</b>
 
     ```
