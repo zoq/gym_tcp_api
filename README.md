@@ -12,7 +12,7 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
   3. [Demo](#demo)
   4. [Distributed Server](#distributed-server)
   5. [API specification](#api-specification)
-  6. [Bug reporting](#bug-reporting)
+  6. [FAQ](#faq)
 
 ## Dependencies
 
@@ -139,4 +139,4 @@ Close the monitor:
 
     {"monitor" {"action": "close"}}
   
-## Bug reporting
+## FAQ
