@@ -151,3 +151,10 @@ Close the monitor:
       ]
   end
   ```
+  
+2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)
+
+  - SOL) This was a cache problem, remove the cache file and try again.
+  ```
+  rm "~/.hex/cache.ets"
+  ```
