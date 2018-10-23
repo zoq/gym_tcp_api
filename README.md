@@ -159,6 +159,7 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
 <b>3. When you run a client, if you get the following error.</b>
+
     ```
     $ ./example
     terminate called after throwing an instance of 'boost::system::system_error'
