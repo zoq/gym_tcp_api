@@ -140,7 +140,7 @@ Close the monitor:
     {"monitor" {"action": "close"}}
   
 ## FAQ
-1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.
+<b>1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.</b>
 
   - SOL) Change the version of erlport manually in <b>mix.exs</b>. As of October, 2018, the "0.10.0" version worked. See this https://github.com/hdima/erlport
     ```
@@ -152,7 +152,7 @@ Close the monitor:
     end
     ```
   
-2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)
+<b>2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)</b>
 
   - SOL) This was a cache problem, remove the cache file and try again.
     ```
