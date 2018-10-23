@@ -142,7 +142,7 @@ Close the monitor:
 ## FAQ
 1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.
 
-  - SOL) Change the version of erlport manually in <b>mix.exs</b>. (As of October, 2018, the "0.10.0" version worked.)
+  - SOL) Change the version of erlport manually in <b>mix.exs</b>. (As of October, 2018, the "0.10.0" version worked.https://github.com/hdima/erlport.git)
   ```
   defp deps do
       [
