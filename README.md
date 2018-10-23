@@ -160,11 +160,12 @@ Close the monitor:
     ```
     
 <b>3. When you run a client, if you get the following error.</b>
-
+    ```
     $ ./example
     terminate called after throwing an instance of 'boost::system::system_error'
       what():  Connection refused
     Aborted (core dumped)    
+    ```
 
 
   - SOL) I changed the line 17 code const std::string host = "kurg.org"; to const std::string host = "127.0.0.1"; in example.cpp and then the program is working correctly.
