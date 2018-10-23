@@ -159,14 +159,12 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
     
-<b>3. When you run a client, if you get the following error.</b>
-    ```
-    $ ./example
-    terminate called after throwing an instance of 'boost::system::system_error'
-      what():  Connection refused
-    Aborted (core dumped)    
-    ```
-
-
-  - SOL) I changed the line 17 code const std::string host = "kurg.org"; to const std::string host = "127.0.0.1"; in example.cpp and then the program is working correctly.
+<b>3. When you run a client, <b>what():  Connection refused.</b> error occurs
+  
+  - SOL) I changed the line 17 code const std::string host = "kurg.org"; to const std::string host = "127.0.0.1"; in example.cpp and then the program is working correctly. This is to use your own server instance.
+  ```
+  const std::string environment = "CartPole-v0";
+  const std::string host = "127.0.0.1";
+  const std::string port = "4040";
+  ```
     
