@@ -146,7 +146,7 @@ Close the monitor:
   ```
   defp deps do
       [
-        {:erlport, "~> 0.10.0"},
+        {:erlport, "~> 0.10.0"}, # Choose the version.
         {:poolboy, "~> 1.5"}
       ]
   end
