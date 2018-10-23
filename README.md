@@ -159,7 +159,7 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
     
-<b>3. When you run a client, <b>what():  Connection refused.</b> error occurs
+<b>3. When you run a client, <b>what():  Connection refused.</b> error occurs</b>
   
   - SOL) I changed the line 17 code const std::string host = "kurg.org"; to const std::string host = "127.0.0.1"; in example.cpp and then the program is working correctly. This is to use your own server instance.
   ```
