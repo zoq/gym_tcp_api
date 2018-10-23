@@ -143,18 +143,18 @@ Close the monitor:
 1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.
 
   - SOL) Change the version of erlport manually in <b>mix.exs</b>. As of October, 2018, the "0.10.0" version worked. See this https://github.com/hdima/erlport
-  ```
-  defp deps do
-      [
-        {:erlport, "~> 0.10.0"}, # Choose the version.
-        {:poolboy, "~> 1.5"}
-      ]
-  end
-  ```
+    ```
+    defp deps do
+        [
+          {:erlport, "~> 0.10.0"}, # Choose the version.
+          {:poolboy, "~> 1.5"}
+        ]
+    end
+    ```
   
 2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)
 
   - SOL) This was a cache problem, remove the cache file and try again.
-  ```
-  rm "~/.hex/cache.ets"
-  ```
+    ```
+    rm "~/.hex/cache.ets"
+    ```
