@@ -14,7 +14,7 @@ using namespace gym;
 int main(int argc, char* argv[])
 {
   const std::string environment = "CartPole-v0";
-  const std::string host = "kurg.org";
+  const std::string host = "127.0.0.1";
   const std::string port = "4040";
 
   double totalReward = 0;

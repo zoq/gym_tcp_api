@@ -12,6 +12,7 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
   3. [Demo](#demo)
   4. [Distributed Server](#distributed-server)
   5. [API specification](#api-specification)
+  6. [FAQ](#faq)
 
 ## Dependencies
 
@@ -137,3 +138,24 @@ Start the monitor:
 Close the monitor:
 
     {"monitor" {"action": "close"}}
+  
+## FAQ
+<b>1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.</b>
+
+  - SOL) Change the version of erlport manually in <b>mix.exs</b>. As of October, 2018, the "0.10.0" version worked. See this https://github.com/hdima/erlport
+    ```
+    defp deps do
+        [
+          {:erlport, "~> 0.10.0"}, # Choose the version.
+          {:poolboy, "~> 1.5"}
+        ]
+    end
+    ```
+  
+<b>2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)</b>
+
+  - SOL) This was a cache problem, remove the cache file and try again.
+    ```
+    rm "~/.hex/cache.ets"
+    ```
+    
