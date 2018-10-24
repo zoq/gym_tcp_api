@@ -159,12 +159,3 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
     
-<b>3. When you run a client, if "what():  Connection refused." error occurs</b>
-  
-  - SOL) If you use your own server instance, changed the line 17 code const std::string host = "kurg.org"; to const std::string host = "127.0.0.1"; in example.cpp and try again.
-    ```
-    const std::string environment = "CartPole-v0";
-    const std::string host = "127.0.0.1"; // Change this line
-    const std::string port = "4040";
-    ```
-    
