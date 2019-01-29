@@ -19,7 +19,7 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
 The server has the following dependencies:
 
     Elixir >= 1.0
-    OpenAI Gym
+    OpenAI Gym <= 0.9.5
 
 The c++ example agent has the following dependencies:
 
@@ -159,3 +159,9 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
     
+<b>3. ImportError, cannot import name Monitor</b>
+  
+  - SOL) We guess the OpenAI gym's interface has been changed, hence can you try to downgrade the gym version?
+    ```
+    pip install gym==0.9.5
+    ```
