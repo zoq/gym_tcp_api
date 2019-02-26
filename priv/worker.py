@@ -14,6 +14,7 @@ import numpy as np
 
 import gym
 from gym.wrappers import Monitor
+
 try:
   import zlib
 except ImportError:
@@ -123,19 +124,19 @@ class Envs(object):
       # Many newer JSON parsers allow it, but many don't. Notably python json
       # module can read and write such floats. So we only here fix
       # "export version", also make it flat.
-      info['low'] = [(str(x) if x != -np.inf else -1e100) for x
+      info['low'] = [(x if x != -np.inf else -1e100) for x
           in np.array(space.low ).flatten()]
-      info['high'] = [(str(x) if x != +np.inf else +1e100) for x
+      info['high'] = [(x if x != +np.inf else +1e100) for x
           in np.array(space.high).flatten()]
     elif info['name'] == 'HighLow':
       info['num_rows'] = space.num_rows
-      info['matrix'] = [str((float(x) if x != -np.inf else -1e100) if x != +np.inf
+      info['matrix'] = [((float(x) if x != -np.inf else -1e100) if x != +np.inf
           else +1e100) for x in np.array(space.matrix).flatten()]
     elif info['name'] == 'MultiDiscrete':
       info['n'] = space.num_discrete_space
-      info['low'] = [(str(x) if x != -np.inf else -1e100) for x
+      info['low'] = [(x if x != -np.inf else -1e100) for x
           in np.array(space.low ).flatten()]
-      info['high'] = [(str(x) if x != +np.inf else +1e100) for x
+      info['high'] = [(x if x != +np.inf else +1e100) for x
           in np.array(space.high).flatten()]
     return info
 
@@ -174,6 +175,21 @@ class InvalidUsage(Exception):
     rv = dict(self.payload or ())
     rv['message'] = self.message
     return rv
+
+"""
+Python does not support float32/int64 json serialization
+The following function converts to json defaults.
+So that json.dumps can serialize the dict to json.
+"""
+class NDArrayEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, np.ndarray):
+      return obj.tolist()
+    try:
+      return json.JSONEncoder.default(self, obj)
+    except:
+      return obj.tolist()
+
 
 """
   Parse parameters.
@@ -231,7 +247,7 @@ def process_response(response):
       envs.env_close(instance_id)
 
     instance_id = envs.create(enviroment)
-    data = json.dumps({"instance" : instance_id})
+    data = json.dumps({"instance" : instance_id},cls=NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   compression = get_optional_params(jsonMessage, "server", "compression")
@@ -247,7 +263,7 @@ def process_response(response):
     if actionspace == "sample":
       sample = envs.get_action_space_sample(instance_id)
 
-      data = json.dumps({"sample" : sample})
+      data = json.dumps({"sample" : sample},cls=NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   envAction = get_optional_params(jsonMessage, "env", "action")
@@ -258,15 +274,15 @@ def process_response(response):
       return ""
     elif envAction == "reset":
       observation = envs.reset(instance_id)
-      data = json.dumps({"observation" : observation})
+      data = json.dumps({"observation" : observation},cls=NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "actionspace":
       info = envs.get_action_space_info(instance_id)
-      data = json.dumps({"info" : info})
+      data = json.dumps({"info" : info},cls=NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "observationspace":
       info = envs.get_observation_space_info(instance_id)
-      data = json.dumps({"info" : info})
+      data = json.dumps({"info" : info},cls=NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   step = get_optional_param(jsonMessage, "step")
@@ -282,7 +298,7 @@ def process_response(response):
     data = json.dumps({"observation" : obs,
                        "reward" : reward,
                        "done" : done,
-                       "info" : info})
+                       "info" : info},cls=NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   seed = get_optional_params(jsonMessage, "env", "seed")
