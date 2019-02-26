@@ -18,8 +18,14 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
 
 The server has the following dependencies:
 
+    Python3
     Elixir >= 1.0
-    OpenAI Gym <= 0.9.5
+    OpenAI Gym <= 0.9.
+
+To make Python3 as default Python:
+
+      $ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+
 
 The c++ example agent has the following dependencies:
 
@@ -33,8 +39,8 @@ The c++ example agent has the following dependencies:
 
 First, checkout the repo and change into the unpacked directory:
 
-      git clone https://github.com/zoq/gym_tcp_api.git
-      cd gym_tcp_api
+      $  git clone https://github.com/zoq/gym_tcp_api.git
+      $  cd gym_tcp_api
 
 Then install the elixir dependencies:
 
@@ -44,8 +50,8 @@ Then install the elixir dependencies:
 
 First, checkout the repo and change into the unpacked c++ client directory:
 
-      git clone https://github.com/zoq/gym_tcp_api.git
-      cd gym_tcp_api/cpp/
+      $  git clone https://github.com/zoq/gym_tcp_api.git
+      $  cd gym_tcp_api/cpp/
 
 Then, make a build directory. The directory can have any name, not just 'build', but 'build' is sufficient.
 
@@ -155,13 +161,21 @@ Close the monitor:
 <b>2. Failed to fetch record for 'hexpm/poolboy' from registry (using cache)</b>
 
   - SOL) This was a cache problem, remove the cache file and try again.
-    ```
+    ```bash
     rm "~/.hex/cache.ets"
     ```
     
 <b>3. ImportError, cannot import name Monitor</b>
   
   - SOL) We guess the OpenAI gym's interface has been changed, hence can you try to downgrade the gym version?
-    ```
+    ```bash
     pip install gym==0.9.5
+    ```
+
+<b>4. TypeError: super() takes at least 1 argument (0 given)
+super().__init__((), np.int64) </b>
+  
+  - SOL) Make Python3 as the default Python (since gym is built on Python3).
+    ```bash
+      $ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
     ```
