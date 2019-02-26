@@ -13,7 +13,7 @@ defmodule GymTcpApi.Worker do
   alias Application, as: App
 
   def start_link(_args) do
-    priv_path = App.app_dir(:gym_tcp_api, "priv") |> to_char_list
+    priv_path = App.app_dir(:gym_tcp_api, "priv") |> to_charlist
     GenServer.start_link(__MODULE__, priv_path)
   end
 
@@ -28,9 +28,9 @@ defmodule GymTcpApi.Worker do
     send(caller, {:response, response, current})
 
     receive do
-      {:data, message, c} ->
+      {:data, message, _c } ->
           handle_call({message, caller}, :ok, python);
-      {:close, message} -> :python.call(python, :worker, :process_response, [""])
+      {:close, _message} -> :python.call(python, :worker, :process_response, [""])
     end
 
     {:reply, [""], python}
