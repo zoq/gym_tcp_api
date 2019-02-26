@@ -13,8 +13,7 @@ import uuid
 import numpy as np
 
 import gym
-from gym.wrappers.monitoring import Monitor
-
+from gym.wrappers import Monitor
 try:
   import zlib
 except ImportError:
