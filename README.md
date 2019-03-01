@@ -20,12 +20,7 @@ The server has the following dependencies:
 
     Python3
     Elixir >= 1.0
-    OpenAI Gym <= 0.9.
-
-To make Python3 as default Python:
-
-      $ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-
+    OpenAI Gym.
 
 The c++ example agent has the following dependencies:
 
@@ -165,17 +160,13 @@ Close the monitor:
     rm "~/.hex/cache.ets"
     ```
     
-<b>3. ImportError, cannot import name Monitor</b>
+<b>3. TypeError: super() takes at least 1 argument (0 given)
+            super().__init__((), np.int64) </b>
   
-  - SOL) We guess the OpenAI gym's interface has been changed, hence can you try to downgrade the gym version?
-    ```bash
-    pip install gym==0.9.5
-    ```
+  - SOL 1) Using Python3 VirtualEnv (Recommended).
 
-<b>4. TypeError: super() takes at least 1 argument (0 given)
-super().__init__((), np.int64) </b>
-  
-  - SOL) Make Python3 as the default Python (since gym is built on Python3).
-    ```bash
-      $ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-    ```
+        $ virtualenv -p python3 envname
+          
+  - SOL 2) Make Python3 as the default Python (since gym is built on Python3).
+
+        $ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
