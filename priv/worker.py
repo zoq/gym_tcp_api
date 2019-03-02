@@ -247,7 +247,7 @@ def process_response(response):
       envs.env_close(instance_id)
 
     instance_id = envs.create(enviroment)
-    data = json.dumps({"instance" : instance_id},cls = NDArrayEncoder)
+    data = json.dumps({"instance" : instance_id}, cls = NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   compression = get_optional_params(jsonMessage, "server", "compression")
@@ -263,7 +263,7 @@ def process_response(response):
     if actionspace == "sample":
       sample = envs.get_action_space_sample(instance_id)
 
-      data = json.dumps({"sample" : sample},cls = NDArrayEncoder)
+      data = json.dumps({"sample" : sample}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   envAction = get_optional_params(jsonMessage, "env", "action")
@@ -274,15 +274,15 @@ def process_response(response):
       return ""
     elif envAction == "reset":
       observation = envs.reset(instance_id)
-      data = json.dumps({"observation" : observation},cls = NDArrayEncoder)
+      data = json.dumps({"observation" : observation}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "actionspace":
       info = envs.get_action_space_info(instance_id)
-      data = json.dumps({"info" : info},cls = NDArrayEncoder)
+      data = json.dumps({"info" : info}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "observationspace":
       info = envs.get_observation_space_info(instance_id)
-      data = json.dumps({"info" : info},cls = NDArrayEncoder)
+      data = json.dumps({"info" : info}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   step = get_optional_param(jsonMessage, "step")
@@ -298,7 +298,7 @@ def process_response(response):
     data = json.dumps({"observation" : obs,
                        "reward" : reward,
                        "done" : done,
-                       "info" : info},cls = NDArrayEncoder)
+                       "info" : info}, cls = NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   seed = get_optional_params(jsonMessage, "env", "seed")
