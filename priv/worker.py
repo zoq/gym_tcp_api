@@ -1,7 +1,7 @@
 """
   @file worker.py
   @author Marcus Edel
-
+  @author Mehul Kumar Nirala
   Container and manager for the environments instantiated on this server.
 """
 
