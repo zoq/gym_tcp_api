@@ -1,7 +1,7 @@
 """
   @file worker.py
   @author Marcus Edel
-
+  @author Mehul Kumar Nirala
   Container and manager for the environments instantiated on this server.
 """
 
@@ -13,7 +13,7 @@ import uuid
 import numpy as np
 
 import gym
-from gym.wrappers.monitoring import Monitor
+from gym.wrappers import Monitor
 
 try:
   import zlib
@@ -177,6 +177,21 @@ class InvalidUsage(Exception):
     return rv
 
 """
+Json does not support float32/int64  serialization
+The following class converts to json defaults.
+So that json.dumps can serialize the dict to json.
+"""
+class NDArrayEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, np.ndarray):
+      return obj.tolist()
+    try:
+      return json.JSONEncoder.default(self, obj)
+    except:
+      return obj.tolist()
+
+
+"""
   Parse parameters.
 """
 def get_optional_params(json, param1, param2):
@@ -232,7 +247,7 @@ def process_response(response):
       envs.env_close(instance_id)
 
     instance_id = envs.create(enviroment)
-    data = json.dumps({"instance" : instance_id})
+    data = json.dumps({"instance" : instance_id}, cls = NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   compression = get_optional_params(jsonMessage, "server", "compression")
@@ -248,7 +263,7 @@ def process_response(response):
     if actionspace == "sample":
       sample = envs.get_action_space_sample(instance_id)
 
-      data = json.dumps({"sample" : sample})
+      data = json.dumps({"sample" : sample}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   envAction = get_optional_params(jsonMessage, "env", "action")
@@ -259,15 +274,15 @@ def process_response(response):
       return ""
     elif envAction == "reset":
       observation = envs.reset(instance_id)
-      data = json.dumps({"observation" : observation})
+      data = json.dumps({"observation" : observation}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "actionspace":
       info = envs.get_action_space_info(instance_id)
-      data = json.dumps({"info" : info})
+      data = json.dumps({"info" : info}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
     elif envAction == "observationspace":
       info = envs.get_observation_space_info(instance_id)
-      data = json.dumps({"info" : info})
+      data = json.dumps({"info" : info}, cls = NDArrayEncoder)
       return process_data(data, compressionLevel)
 
   step = get_optional_param(jsonMessage, "step")
@@ -283,7 +298,7 @@ def process_response(response):
     data = json.dumps({"observation" : obs,
                        "reward" : reward,
                        "done" : done,
-                       "info" : info})
+                       "info" : info}, cls = NDArrayEncoder)
     return process_data(data, compressionLevel)
 
   seed = get_optional_params(jsonMessage, "env", "seed")
