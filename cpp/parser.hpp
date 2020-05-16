@@ -87,6 +87,12 @@ class Parser
    */
   void environment(std::string& instance);
 
+  /**
+   * Parse the url data.
+   *
+   * @param url The url.
+   */
+  void url(std::string& url);
  private:
   //! Store results of the given json string in the row'th of the given
   //! matrix v.

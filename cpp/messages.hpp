@@ -118,6 +118,12 @@ static inline std::string Step(
   return "";
 }
 
+//! Create message to get the url.
+static inline std::string URL()
+{
+  return "{\"url\":{\"action\": \"url\"}}";
+}
+
 } // namespace messages
 } // namespace gym
 

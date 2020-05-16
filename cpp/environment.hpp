@@ -117,6 +117,11 @@ class Environment
    */
   void compression(const size_t compression);
 
+  /*
+   * Get the environment url.
+   */
+  std::string url();
+
  private:
   //! Get the observation space information.
   void observationSpace();

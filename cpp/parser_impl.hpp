@@ -195,6 +195,16 @@ void Parser::vec(
     v.push_back(vector[i].as_int64());
 }
 
+void Parser::url(std::string& url)
+{
+  pjson::key_value_vec_t& obj = doc.get_object();
+  for (size_t i = 0u; i < obj.size(); ++i)
+  {
+    if (std::strncmp("url", obj[i].get_key().m_p, 3) == 0)
+      url = obj[i].get_value().get_string_ptr();
+  }
+}
+
 } // namespace gym
 
 #endif

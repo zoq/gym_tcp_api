@@ -126,6 +126,20 @@ void Environment::actionSpace()
   parser.space(&action_space);
 }
 
+std::string Environment::url()
+{
+  client.send(messages::URL());
+
+  std::string json;
+  client.receive(json);
+
+  std::string url;
+  parser.parse(json);
+  parser.url(url);
+
+  return url;
+}
+
 } // namespace gym
 
 #endif
