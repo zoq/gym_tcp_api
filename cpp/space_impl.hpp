@@ -14,22 +14,22 @@
 
 namespace gym {
 
-Space::Space() : parser(new Parser())
+inline Space::Space() : parser(new Parser())
 {
   // Nothing to do here.
 }
 
-Space::~Space()
+inline Space::~Space()
 {
   delete parser;
 }
 
-void Space::client(Client& c)
+inline void Space::client(Client& c)
 {
   clientPtr = &c;
 }
 
-const arma::mat& Space::sample()
+inline const arma::mat& Space::sample()
 {
   clientPtr->send(messages::EnvironmentActionSpaceSample());
 

@@ -13,23 +13,23 @@
 
 namespace gym {
 
-Parser::Parser() : dataStream(0)
+inline Parser::Parser() : dataStream(0)
 {
   // Nothing to do here.
 }
 
-Parser::~Parser()
+inline Parser::~Parser()
 {
   if ((dataStream != NULL) && (dataStream[0] == '\0'))
     delete[] dataStream;
 }
 
-Parser::Parser(const std::string& data)
+inline Parser::Parser(const std::string& data)
 {
   parse(data);
 }
 
-void Parser::parse(const std::string& data)
+inline void Parser::parse(const std::string& data)
 {
   if ((dataStream != NULL) && (dataStream[0] == '\0'))
     delete[] dataStream;
@@ -41,7 +41,7 @@ void Parser::parse(const std::string& data)
   doc.deserialize_in_place(dataStream);
 }
 
-void Parser::actionSample(const Space* space, arma::mat& sample)
+inline void Parser::actionSample(const Space* space, arma::mat& sample)
 {
   if (space->type == Space::DISCRETE)
   {
@@ -54,7 +54,7 @@ void Parser::actionSample(const Space* space, arma::mat& sample)
   }
 }
 
-void Parser::info(double& reward, bool& done, std::string& info)
+inline void Parser::info(double& reward, bool& done, std::string& info)
 {
   const pjson::value_variant* doneValue = doc.find_value_variant("done");
   if (doneValue != NULL)
@@ -65,7 +65,7 @@ void Parser::info(double& reward, bool& done, std::string& info)
     reward = rewardValue->as_double();
 }
 
-void Parser::environment(std::string& instance)
+inline void Parser::environment(std::string& instance)
 {
   pjson::key_value_vec_t& obj = doc.get_object();
   for (size_t i = 0u; i < obj.size(); ++i)
@@ -75,7 +75,7 @@ void Parser::environment(std::string& instance)
   }
 }
 
-void Parser::observation(const Space* space, arma::mat& observation)
+inline void Parser::observation(const Space* space, arma::mat& observation)
 {
   const pjson::value_variant* value = doc.find_value_variant("observation");
   if (space->boxShape.size() == 1)
@@ -131,7 +131,7 @@ void Parser::observation(const Space* space, arma::mat& observation)
   }
 }
 
-void Parser::space(Space* space)
+inline void Parser::space(Space* space)
 {
   const pjson::key_value_vec_t& obj = doc.find_value_variant(
       "info")->get_object();
@@ -174,28 +174,28 @@ void Parser::space(Space* space)
   }
 }
 
-void Parser::vec(const pjson::value_variant_vec_t& vector, arma::mat& v)
+inline void Parser::vec(const pjson::value_variant_vec_t& vector, arma::mat& v)
 {
   size_t idx = 0;
   for (pjson::uint i = 0; i < vector.size(); ++i)
     v(idx++) = vector[i].as_double();
 }
 
-void Parser::vec(
+inline void Parser::vec(
     const pjson::value_variant_vec_t& vector, std::vector<float>& v)
 {
   for (pjson::uint i = 0; i < vector.size(); ++i)
     v.push_back(vector[i].as_float());
 }
 
-void Parser::vec(
+inline void Parser::vec(
     const pjson::value_variant_vec_t& vector, std::vector<int>& v)
 {
   for (pjson::uint i = 0; i < vector.size(); ++i)
     v.push_back(vector[i].as_int64());
 }
 
-void Parser::url(std::string& url)
+inline void Parser::url(std::string& url)
 {
   pjson::key_value_vec_t& obj = doc.get_object();
   for (size_t i = 0u; i < obj.size(); ++i)

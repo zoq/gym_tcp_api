@@ -13,23 +13,23 @@
 
 namespace gym {
 
-Monitor::Monitor()
+inline Monitor::Monitor()
 {
   // Nothing to do here.
 }
 
-void Monitor::client(Client& c)
+inline void Monitor::client(Client& c)
 {
   clientPtr = &c;
 }
 
-void Monitor::start(
+inline void Monitor::start(
     const std::string& directory, const bool force, const bool resume)
 {
   clientPtr->send(messages::MonitorStart(directory, force, resume));
 }
 
-void Monitor::close()
+inline void Monitor::close()
 {
   clientPtr->send(messages::MonitorClose());
 }

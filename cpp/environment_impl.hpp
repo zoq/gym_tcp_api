@@ -13,18 +13,18 @@
 
 namespace gym {
 
-Environment::Environment() : renderValue(false)
+inline Environment::Environment() : renderValue(false)
 {
   // Nothing to do here.
 }
 
-Environment::Environment(const std::string& host, const std::string& port) :
+inline Environment::Environment(const std::string& host, const std::string& port) :
     renderValue(false)
 {
   client.connect(host, port);
 }
 
-Environment::Environment(
+inline Environment::Environment(
     const std::string& host,
     const std::string& port,
     const std::string& environment) :
@@ -34,7 +34,7 @@ Environment::Environment(
   make(environment);
 }
 
-void Environment::make(const std::string& environment)
+inline void Environment::make(const std::string& environment)
 {
   client.send(messages::EnvironmentName(environment));
 
@@ -51,7 +51,7 @@ void Environment::make(const std::string& environment)
   monitor.client(client);
 }
 
-void Environment::render()
+inline void Environment::render()
 {
   if (renderValue)
   {
@@ -63,12 +63,12 @@ void Environment::render()
   }
 }
 
-void Environment::close()
+inline void Environment::close()
 {
   client.send(messages::EnvironmentClose());
 }
 
-const arma::mat& Environment::reset()
+inline const arma::mat& Environment::reset()
 {
   client.send(messages::EnvironmentReset());
 
@@ -81,7 +81,7 @@ const arma::mat& Environment::reset()
   return observation;
 }
 
-void Environment::step(const arma::mat& action)
+inline void Environment::step(const arma::mat& action)
 {
   client.send(messages::Step(action, action_space, renderValue));
 
@@ -93,18 +93,18 @@ void Environment::step(const arma::mat& action)
   parser.info(reward, done, info);
 }
 
-void Environment::seed(const size_t s)
+inline void Environment::seed(const size_t s)
 {
   client.send(messages::EnvironmentSeed(s));
 }
 
-void Environment::compression(const size_t compression)
+inline void Environment::compression(const size_t compression)
 {
   client.compression(compression);
   client.send(messages::ServerCompression(compression));
 }
 
-void Environment::observationSpace()
+inline void Environment::observationSpace()
 {
   client.send(messages::EnvironmentObservationSpace());
 
@@ -115,7 +115,7 @@ void Environment::observationSpace()
   parser.space(&observation_space);
 }
 
-void Environment::actionSpace()
+inline void Environment::actionSpace()
 {
   client.send(messages::EnvironmentActionSpace());
 
@@ -126,7 +126,7 @@ void Environment::actionSpace()
   parser.space(&action_space);
 }
 
-std::string Environment::url()
+inline std::string Environment::url()
 {
   client.send(messages::URL());
 
