@@ -115,6 +115,27 @@ static inline std::string Step(
 
     return msg;
   }
+  if (space.type == Space::BOX)
+  {
+    std::string actionStr = "[";
+    for (size_t i = 0; i < action.n_elem; ++i)
+    {
+      if (i < (action.n_elem - 1))
+      {
+        actionStr += std::to_string((double) action(i)) + ",";
+      }
+      else
+      {
+        actionStr += std::to_string((double) action(i));
+      }
+    }
+    actionStr += "]";
+
+    std::string msg = "{\"step\":{\"action\":" + actionStr +
+        ", \"render\":" + std::to_string(render) + "}}";
+
+    return msg;
+  }
   return "";
 }
 
