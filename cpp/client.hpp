@@ -202,6 +202,7 @@ class Client
   //! Locally stored socket object.
   tcp::socket s;
 
+  //! Object to control connection timeouts.
   deadline_timer deadline;
 
   //! Locally-stored compression parameter.
