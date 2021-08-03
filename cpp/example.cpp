@@ -49,7 +49,10 @@ int main(int argc, char* argv[])
   std::cout << "Instance: " << env.instance << " total steps: " << totalSteps
       << " reward: " << totalReward << std::endl;
 
-  std::cout << "Video: https://kurg.org/media/gym/" << env.instance
+  env.close();
+  const std::string url = env.url();
+
+  std::cout << "Video: https://kurg.org/media/gym/" << url
       << " (it might take some minutes before the video is accessible)."
       << std::endl;
 
