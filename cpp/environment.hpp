@@ -13,7 +13,7 @@
 #include "client.hpp"
 #include "parser.hpp"
 #include "space.hpp"
-#include "monitor.hpp"
+#include "record_episode_statistics.hpp"
 
 namespace gym {
 
@@ -29,8 +29,8 @@ class Environment
   //! Locally stored action space instance.
   Space action_space;
 
-  //! Locally stored monitor instance.
-  Monitor monitor;
+  //! Locally stored record episode statistics instance.
+  RecordEpisodeStatistics record_episode_stats;
 
   //! Locally stored reward value.
   double reward;

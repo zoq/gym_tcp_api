@@ -48,7 +48,7 @@ inline void Environment::make(const std::string& environment)
 
   observation_space.client(client);
   action_space.client(client);
-  monitor.client(client);
+  record_episode_stats.client(client);
 }
 
 inline void Environment::render()

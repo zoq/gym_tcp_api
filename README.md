@@ -132,13 +132,9 @@ Step though an environment using an action:
 
     {"step" {"action": "[0, 1, 0, 0]"}}
 
-Start the monitor:
+Start the record episode statistics:
 
-    {"monitor" {"action": "start", "force" : "1", "resume" : "0", "directory", "/home/gym/"}}
-
-Close the monitor:
-
-    {"monitor" {"action": "close"}}
+    {"record_episode_stats" {"action": "start"}}
   
 ## FAQ
 <b>1. In the Erlang/OTP 21, erlport may not be compiled, because the latest version was not reflected in the official Erlport GitHub.</b>

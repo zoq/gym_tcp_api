@@ -81,8 +81,8 @@ set(gym_tcp_api_source
     environment_impl.hpp
     client.hpp
     messages.hpp
-    monitor.hpp
-    monitor_impl.hpp
+    record_episode_statistics.hpp
+    record_episode_statistics_impl.hpp
 )
 
 # Define the executable and link against the libraries we need to build the

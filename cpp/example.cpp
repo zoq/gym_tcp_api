@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
   Environment env(host, port, environment);
   env.compression(9);
-  env.monitor.start("./dummy/", true, true);
+  env.record_episode_stats.start();
 
   env.reset();
   env.render();

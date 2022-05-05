@@ -7,7 +7,7 @@ from _thread import *
 import glob
 
 import gym
-from gym.wrappers import Monitor
+from gym.wrappers import RecordEpisodeStatistics
 
 try:
   import zlib
@@ -148,16 +148,9 @@ class Envs(object):
           in np.array(space.high).flatten()]
     return info
 
-  def monitor_start(self, instance_id, directory, force, resume):
+  def record_episode_stats(self, instance_id):
     env = self._lookup_env(instance_id)
-    self.envs[instance_id] = Monitor(env, "/var/log/gym/" + str(instance_id), None, True, resume)
-
-  def monitor_close(self, instance_id):
-    env = self._lookup_env(instance_id)
-    #env.monitor.close()
-
-    if env != None:
-        env.monitor.close()
+    self.envs[instance_id] = RecordEpisodeStatistics(env)
 
   def env_close(self, instance_id):
     env = self._lookup_env(instance_id)
@@ -353,21 +346,12 @@ def threaded_client(connection):
           connection.send(process_data(data, compressionLevel))
           enviroment, instance_id, close, compressionLevel
 
-      monitor = get_optional_param(jsonMessage, "monitor")
-      if monitor is not None:
-        directory = get_optional_param(jsonMessage["monitor"], "directory")
-        action = get_optional_param(jsonMessage["monitor"], "action")
-
-        force = get_optional_param(jsonMessage["monitor"], "force")
-        force = True if (force is not None and force == 1) else False
-
-        resume = get_optional_param(jsonMessage["monitor"], "resume")
-        resume = True if (resume is not None and resume == 1) else False
+      record_episode_stats = get_optional_param(jsonMessage, "record_episode_stats")
+      if record_episode_stats is not None:
+        action = get_optional_param(jsonMessage["record_episode_stats"], "action")
 
         if action == "start":
-          envs.monitor_start(instance_id, directory, force, resume)
-        elif action == "close":
-          envs.monitor_close(instance_id)
+          envs.record_episode_stats(instance_id)
 
       connection.send(str.encode(""))
       return enviroment, instance_id, close, compressionLevel
