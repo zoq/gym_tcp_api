@@ -27,19 +27,10 @@ static inline std::string EnvironmentReset()
   return "{\"env\":{\"action\": \"reset\"}}";
 }
 
-//! Create message to stop the monitor.
-static inline std::string MonitorClose()
+//! Create message to start the Record Episode Statistics.
+static inline std::string RecordEpisodeStatisticsStart()
 {
-  return "{\"monitor\":{\"action\": \"close\"}}";
-}
-
-//! Create message to start the monitor.
-static inline std::string MonitorStart(
-    const std::string& directory, const bool force, const bool resume)
-{
-  return "{\"monitor\":{\"action\": \"start\", \"force\":" +
-      std::to_string(force) + ", \"resume\": " + std::to_string(resume)
-      + ", \"directory\": \"" + directory + "\"}}";
+  return "{\"record_episode_stats\":{\"action\": \"start\"}}";
 }
 
 //! Create message to set the compression level.

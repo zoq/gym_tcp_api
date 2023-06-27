@@ -13,7 +13,7 @@ using namespace gym;
 
 int main(int argc, char* argv[])
 {
-  const std::string environment = "CartPole-v0";
+  const std::string environment = "CartPole-v1";
   const std::string host = "127.0.0.1";
   const std::string port = "4040";
 
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
   Environment env(host, port, environment);
   env.compression(9);
-  env.monitor.start("./dummy/", true, true);
+  env.record_episode_stats.start();
 
   env.reset();
   env.render();
