@@ -63,9 +63,14 @@ Once CMake is configured, building the example agent is as simple as typing 'mak
 
 ## Getting started
 
-To start the server from the command line, run:
+To start the server from the command line:
+   * For Python server run:
+    
+          $ python python/server.py
+    
+   * For Elixir server run:
 
-      $ iex -S mix
+          $ iex -S mix
 
 In a separate terminal, you can then run the example agent:
 
