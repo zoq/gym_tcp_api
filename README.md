@@ -6,13 +6,17 @@ The server is written in elixir, enabling a distributed infrastructure. Where ea
 
 ## Contents
 
-  1. [Dependencies](#dependencies)
-  2. [Installation](#installation)
-  3. [Getting started](#getting-started)
-  3. [Demo](#demo)
-  4. [Distributed Server](#distributed-server)
-  5. [API specification](#api-specification)
-  6. [FAQ](#faq)
+- [gym-tcp-api](#gym-tcp-api)
+  - [Contents](#contents)
+  - [Dependencies](#dependencies)
+  - [Installation](#installation)
+    - [Server](#server)
+    - [C++ Client](#c-client)
+  - [Getting started](#getting-started)
+  - [Demo](#demo)
+  - [Distributed Server](#distributed-server)
+  - [API specification](#api-specification)
+  - [FAQ](#faq)
 
 ## Dependencies
 
@@ -63,9 +67,14 @@ Once CMake is configured, building the example agent is as simple as typing 'mak
 
 ## Getting started
 
-To start the server from the command line, run:
+To start the server from the command line:
+   * For Python server run:
+    
+          $ python python/server.py
+    
+   * For Elixir server run:
 
-      $ iex -S mix
+          $ iex -S mix
 
 In a separate terminal, you can then run the example agent:
 
