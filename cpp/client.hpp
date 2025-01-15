@@ -49,8 +49,8 @@ class Client
    * @param port The port used for the connection.
    */
   Client() :
-      s(io_service),
-      deadline(io_service),
+      s(io_context),
+      deadline(io_context),
       compressionLevel(0)
   {
     deadline.expires_at(boost::posix_time::pos_infin);
@@ -70,9 +70,8 @@ class Client
 
   void connect(const std::string& host, const std::string& port)
   {
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), host, port);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
+    tcp::resolver resolver(io_context);
+    tcp::resolver::results_type iterator = resolver.resolve(tcp::v4(), host, port);
 
     // Set a deadline for the asynchronous operation.
     deadline.expires_from_now(boost::posix_time::seconds(10));
@@ -85,7 +84,7 @@ class Client
     boost::asio::async_connect(s, iterator, var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
-    do io_service.run_one(); while (ec == boost::asio::error::would_block);
+    do io_context.run_one(); while (ec == boost::asio::error::would_block);
 
     // Determine whether a connection was successfully established.
     if (ec || !s.is_open())
@@ -117,7 +116,7 @@ class Client
         boost::asio::placeholders::bytes_transferred, &reply_length));
 
     // Block until the asynchronous operation has completed.
-    do io_service.run_one(); while (ec == boost::asio::error::would_block);
+    do io_context.run_one(); while (ec == boost::asio::error::would_block);
 
     if (ec)
     {
@@ -160,7 +159,7 @@ class Client
         boost::asio::transfer_exactly(d.size()), var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
-    do io_service.run_one(); while (ec == boost::asio::error::would_block);
+    do io_context.run_one(); while (ec == boost::asio::error::would_block);
 
     if (ec)
     {
@@ -197,7 +196,7 @@ class Client
   }
 
   //! Locally stored io service.
-  boost::asio::io_service io_service;
+  boost::asio::io_context io_context;
 
   //! Locally stored socket object.
   tcp::socket s;
