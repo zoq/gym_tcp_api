@@ -77,9 +77,9 @@ class Envs(object):
     except KeyError:
       raise InvalidUsage('Instance_id {} unknown'.format(instance_id))
 
-  def create(self, env_id):
+  def create(self, env_id, render_mode=None):
     try:
-      env = gym.make(env_id)
+      env = gym.make(env_id, render_mode=render_mode)
     except gym.error.Error:
       raise InvalidUsage(
           "Attempted to look up malformed environment ID '{}'".format(env_id))
@@ -264,12 +264,15 @@ def threaded_client(connection):
       print(jsonMessage)
 
       enviroment = get_optional_params(jsonMessage, "env", "name")
+      render_mode = get_optional_params(jsonMessage, "env", "render_mode") 
+      render_mode = render_mode if render_mode != "" else None
+      
       if isinstance(enviroment, basestring):
         compressionLevel = 0
         if instance_id != None:
           envs.env_close(instance_id)
 
-        instance_id = envs.create(enviroment)
+        instance_id = envs.create(enviroment, render_mode)
         data = json.dumps({"instance" : instance_id}, cls = NDArrayEncoder)
         connection.send(process_data(data, compressionLevel))
         return enviroment, instance_id, close, compressionLevel
