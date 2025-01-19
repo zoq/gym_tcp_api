@@ -6,8 +6,8 @@ import os
 from _thread import *
 import glob
 
-import gym
-from gym.wrappers import RecordEpisodeStatistics
+import gymnasium as gym
+from gymnasium.wrappers import RecordEpisodeStatistics
 
 try:
   import zlib
