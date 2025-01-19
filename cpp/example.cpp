@@ -16,11 +16,12 @@ int main(int argc, char* argv[])
   const std::string environment = "CartPole-v1";
   const std::string host = "127.0.0.1";
   const std::string port = "4040";
+  const std::string render_mode = "rgb_array";
 
   double totalReward = 0;
   size_t totalSteps = 0;
 
-  Environment env(host, port, environment);
+  Environment env(host, port, environment, render_mode);
   env.compression(9);
   env.record_episode_stats.start();
 

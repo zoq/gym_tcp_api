@@ -16,9 +16,9 @@ namespace gym {
 namespace messages {
 
 //! Create message to set the enviroment name.
-static inline std::string EnvironmentName(const std::string& name)
+static inline std::string EnvironmentName(const std::string& name, const std::string& render_mode)
 {
-  return "{\"env\":{\"name\": \"" + name + "\"}}";
+  return "{\"env\":{\"name\": \"" + name + "\", \"render_mode\": \"" + render_mode + "\"}}";
 }
 
 //! Create message to reset the enviroment.
