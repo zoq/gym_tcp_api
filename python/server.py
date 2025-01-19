@@ -30,7 +30,7 @@ try:
 except socket.error as e:
     print(str(e))
 
-print('Waitiing for a Connection..')
+print('Waiting for a Connection..')
 ServerSocket.listen(5)
 
 
