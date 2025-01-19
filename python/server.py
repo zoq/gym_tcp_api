@@ -95,7 +95,7 @@ class Envs(object):
 
   def step(self, instance_id, action, render):
     env = self._lookup_env(instance_id)
-    action_from_json = env.action_space.from_jsonable(action)
+    action_from_json = env.action_space.from_jsonable([action])    
     if (not isinstance(action_from_json, (list))):
       action_from_json = int(action_from_json)
 
