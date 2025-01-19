@@ -90,7 +90,7 @@ class Envs(object):
 
   def reset(self, instance_id):
     env = self._lookup_env(instance_id)
-    obs = env.reset()
+    obs, _ = env.reset()
     return env.observation_space.to_jsonable(obs)
 
   def step(self, instance_id, action, render):
