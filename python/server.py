@@ -100,7 +100,7 @@ class Envs(object):
       action_from_json = int(action_from_json)
 
     if render: env.render()
-    [observation, reward, done, info] = env.step(action_from_json)
+    [observation, reward, done, _, info] = env.step(action_from_json[0])
 
     obs_jsonable = env.observation_space.to_jsonable(observation)
     return [obs_jsonable, reward, done, info]
@@ -324,9 +324,7 @@ def threaded_client(connection):
 
         render = True if (render is not None and render == 1) else False
 
-        [obs, reward, done, info] = envs.step(
-                instance_id, action, render)
-
+        [obs, reward, done, info] = envs.step(instance_id, action, render)
         data = json.dumps({"observation" : obs,
                            "reward" : reward,
                            "done" : done,
@@ -376,4 +374,3 @@ while True:
     start_new_thread(threaded_client, (Client, ))
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
-ServerSocket.close()
