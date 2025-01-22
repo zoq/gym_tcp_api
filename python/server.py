@@ -368,9 +368,19 @@ def threaded_client(connection):
         return
     connection.close()
 
+# while True:
+#     Client, address = ServerSocket.accept()
+#     print('Connected to: ' + address[0] + ':' + str(address[1]))
+#     start_new_thread(threaded_client, (Client, ))
+#     ThreadCount += 1
+#     print('Thread Number: ' + str(ThreadCount))
+# ServerSocket.close()
+
+
 while True:
     Client, address = ServerSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
-    start_new_thread(threaded_client, (Client, ))
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
+    threaded_client(Client)  # Directly call the function without threading
+ServerSocket.close()
