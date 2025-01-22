@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   const std::string environment = "CartPole-v1";
   const std::string host = "127.0.0.1";
   const std::string port = "4040";
-  const std::string render_mode = "rgb_array";
+  const std::string render_mode = "human";
 
   double totalReward = 0;
   size_t totalSteps = 0;
