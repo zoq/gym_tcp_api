@@ -24,3 +24,7 @@ build*
 
 # Dummy folder with all gym recordings and metadata
 /dummy
+
+#.vscode folders
+/cpp/.vscode/*
+/.vscode/*

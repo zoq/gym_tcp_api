@@ -27,16 +27,17 @@ inline Environment::Environment(const std::string& host, const std::string& port
 inline Environment::Environment(
     const std::string& host,
     const std::string& port,
-    const std::string& environment) :
+    const std::string& environment, 
+    const std::string& render_mode="") :
     renderValue(false)
 {
   client.connect(host, port);
-  make(environment);
+  make(environment, render_mode);
 }
 
-inline void Environment::make(const std::string& environment)
+inline void Environment::make(const std::string& environment, const std::string& render_mode=nullptr)
 {
-  client.send(messages::EnvironmentName(environment));
+  client.send(messages::EnvironmentName(environment, render_mode));
 
   std::string json;
   client.receive(json);

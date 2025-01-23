@@ -6,8 +6,8 @@ import os
 from _thread import *
 import glob
 
-import gym
-from gym.wrappers import RecordEpisodeStatistics
+import gymnasium as gym
+from gymnasium.wrappers import RecordEpisodeStatistics
 
 try:
   import zlib
@@ -30,7 +30,7 @@ try:
 except socket.error as e:
     print(str(e))
 
-print('Waitiing for a Connection..')
+print('Waiting for a Connection..')
 ServerSocket.listen(5)
 
 
@@ -77,9 +77,9 @@ class Envs(object):
     except KeyError:
       raise InvalidUsage('Instance_id {} unknown'.format(instance_id))
 
-  def create(self, env_id):
+  def create(self, env_id, render_mode=None):
     try:
-      env = gym.make(env_id)
+      env = gym.make(env_id, render_mode=render_mode)
     except gym.error.Error:
       raise InvalidUsage(
           "Attempted to look up malformed environment ID '{}'".format(env_id))
@@ -90,17 +90,17 @@ class Envs(object):
 
   def reset(self, instance_id):
     env = self._lookup_env(instance_id)
-    obs = env.reset()
+    obs, _ = env.reset()
     return env.observation_space.to_jsonable(obs)
 
   def step(self, instance_id, action, render):
     env = self._lookup_env(instance_id)
-    action_from_json = env.action_space.from_jsonable(action)
+    action_from_json = env.action_space.from_jsonable([action])    
     if (not isinstance(action_from_json, (list))):
       action_from_json = int(action_from_json)
 
     if render: env.render()
-    [observation, reward, done, info] = env.step(action_from_json)
+    [observation, reward, done, _, info] = env.step(action_from_json[0])
 
     obs_jsonable = env.observation_space.to_jsonable(observation)
     return [obs_jsonable, reward, done, info]
@@ -264,12 +264,15 @@ def threaded_client(connection):
       print(jsonMessage)
 
       enviroment = get_optional_params(jsonMessage, "env", "name")
+      render_mode = get_optional_params(jsonMessage, "env", "render_mode") 
+      render_mode = render_mode if render_mode != "" else None
+      
       if isinstance(enviroment, basestring):
         compressionLevel = 0
         if instance_id != None:
           envs.env_close(instance_id)
 
-        instance_id = envs.create(enviroment)
+        instance_id = envs.create(enviroment, render_mode)
         data = json.dumps({"instance" : instance_id}, cls = NDArrayEncoder)
         connection.send(process_data(data, compressionLevel))
         return enviroment, instance_id, close, compressionLevel
@@ -321,9 +324,7 @@ def threaded_client(connection):
 
         render = True if (render is not None and render == 1) else False
 
-        [obs, reward, done, info] = envs.step(
-                instance_id, action, render)
-
+        [obs, reward, done, info] = envs.step(instance_id, action, render)
         data = json.dumps({"observation" : obs,
                            "reward" : reward,
                            "done" : done,
@@ -367,10 +368,21 @@ def threaded_client(connection):
         return
     connection.close()
 
+# while True:
+#     Client, address = ServerSocket.accept()
+#     print('Connected to: ' + address[0] + ':' + str(address[1]))
+#     start_new_thread(threaded_client, (Client, ))
+#     ThreadCount += 1
+#     print('Thread Number: ' + str(ThreadCount))
+# ServerSocket.close()
+
+
+# This is needed to make it work on MacOS. In fact, MacOS doesn't allow to rendere on threads 
+# other than the main thread
 while True:
     Client, address = ServerSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
-    start_new_thread(threaded_client, (Client, ))
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
+    threaded_client(Client)  # Directly call the function without threading
 ServerSocket.close()
