@@ -377,6 +377,8 @@ def threaded_client(connection):
 # ServerSocket.close()
 
 
+# This is needed to make it work on MacOS. In fact, MacOS doesn't allow to rendere on threads 
+# other than the main thread
 while True:
     Client, address = ServerSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
