@@ -105,7 +105,7 @@ We use JSON as the format to cimmunicate with the server.
 
 Create the specified environment:
 
-    {"env" {"name": "CartPole-v0"}}
+    {"env" {"name": "CartPole-v0", "render_mode": "human"}}
 
 Close the environment:
 
