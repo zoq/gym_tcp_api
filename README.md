@@ -1,6 +1,6 @@
 # gym-tcp-api
 
-This project provides a distributed infrastructure (TCP API) to the OpenAI Gym toolkit, allowing development in languages other than python.
+This project provides a distributed infrastructure (TCP API) to the Farama-Foundation Gymnasium toolkit, allowing development in languages other than python.
 
 The server is written in elixir, enabling a distributed infrastructure. Where each node makes use of a limitted set of processes that can be used to perform time consuming tasks (4 python instances per default).
 
@@ -20,7 +20,7 @@ The server has the following dependencies:
 
     Python3
     Elixir >= 1.0
-    OpenAI Gym.
+    Farama-Foundation Gymnasium.
 
 The c++ example agent has the following dependencies:
 
@@ -105,7 +105,7 @@ We use JSON as the format to cimmunicate with the server.
 
 Create the specified environment:
 
-    {"env" {"name": "CartPole-v0"}}
+    {"env" {"name": "CartPole-v0", "render_mode": "human"}}
 
 Close the environment:
 

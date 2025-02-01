@@ -71,7 +71,8 @@ class Environment
    */
   Environment(const std::string& host,
               const std::string& port,
-              const std::string& environment);
+              const std::string& environment,
+              const std::string& render_mode);
 
   /*
    * Instantiate the environment object using the specified environment name.
@@ -79,7 +80,7 @@ class Environment
    * @param environment Name of the environments used to train/evaluate
    *        the model.
    */
-  void make(const std::string& environment);
+  void make(const std::string& environment, const std::string& render_mode);
 
   /*
    * Renders the environment.
